@@ -1,0 +1,22 @@
+{
+  "name": "meet-server",
+  "version": "1.0.0",
+  "description": "2017 Capstone-Design, SANGMYUNG UNIVERSITY",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/1nyoung/MeetTeam-server"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.14.0",
+    "mongoose": "^4.6.6",
+    "serve-static": "^1.11.2"
+  },
+  "author": "InyoungJo",
+  "license": "ISC"
+}
