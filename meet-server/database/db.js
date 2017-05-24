@@ -15,7 +15,8 @@ var UserSchema = new Schema({
     addr: String,
     email: String,
     isProfessor: Boolean,
-    rooms: [String]
+    rooms: [String],
+    sess: String
 }), User = mongoose.model('User', UserSchema)
 
 var RoomSchema = new Schema({
