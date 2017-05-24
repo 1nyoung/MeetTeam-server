@@ -1,8 +1,6 @@
 var db = require('../database/db')
-var util = require('util')
 
 function roomAdd (req, res){
-    console.log(util.inspect(req.body))
     var body = req.body
     var room
 
@@ -24,32 +22,19 @@ function roomAdd (req, res){
 
 }
 
-function roomAdd2 (req, res){
-    console.log('hhhhhhhh')
-    console.log(util.inspect(req))
-    var body = req.body
-    var room
-    res.send(req.body)
+// GET /room/list/:userId
+function roomList (req, res){
+    db.room.list(req.params.userId, function (err, rooms) {
+        if(err){
+            res.send(err)
+            return
+        }
 
-    // room = {
-    //     name: body.name,
-    //     chiefName : body.chiefName,
-    //     subject : body.subject,
-    //     belongIds : body.belongIds
-    // }
-    //
-    // db.room.add(room, function (err, result) {
-    //     if (err) {
-    //         res.send(err)
-    //         return
-    //     }
-    //
-    //     res.send(result)
-    // })
-
+        res.send(rooms)
+    })
 }
 
 module.exports = {
     add: roomAdd,
-    add2: roomAdd2
+    list: roomList
 }

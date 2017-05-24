@@ -15,7 +15,6 @@ var UserSchema = new Schema({
     addr: String,
     email: String,
     isProfessor: Boolean,
-    rooms: [String],
     sess: String
 }), User = mongoose.model('User', UserSchema)
 
@@ -23,6 +22,7 @@ var RoomSchema = new Schema({
     name: String,
     chiefName: String,
     subject: String,
+    belongIds: [String]
 }), Room = mongoose.model('Room', RoomSchema)
 
 var TtableSchema = new Schema({
@@ -141,12 +141,18 @@ function userLogin() {
 
 // POST /room/add
 function roomAdd(room, cb) {
-
     Room.update({
         name: room.name
     }, room, {
         upsert: true
     }, cb)
+}
+
+// GET /room/list
+function roomList(id, cb) {
+    Room.find({
+        belongIds: id
+    },cb)
 }
 
 module.exports = {
@@ -157,7 +163,8 @@ module.exports = {
         login: userLogin
     },
     room: {
-        add: roomAdd
+        add: roomAdd,
+        list: roomList
     },
     ttable: {},
     map: {},

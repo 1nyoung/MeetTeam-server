@@ -2,7 +2,6 @@ var crypto = require('crypto')
 var db = require('../database/db')
 
 function userAdd(req, res) {
-    var md5sum = crypto.createHash('md5');
     var body = req.body
     var user
 
@@ -30,6 +29,7 @@ function userAdd(req, res) {
 }
 
 function userLogin(req, res) {
+    //var md5sum = crypto.createHash('md5');
     var body = req.body
     // var sess
     //
