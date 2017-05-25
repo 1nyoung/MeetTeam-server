@@ -20,7 +20,7 @@ function userAdd(req, res) {
 
     db.user.add(user, function (err, result) {
         if(err){
-            console.log(err)
+            console.log("userAdd DB error : " + err)
             res.send(err)
             return
         }
@@ -42,7 +42,7 @@ function userLogin(req, res) {
 
     db.user.get(body.id, function (err, user) {
         if(err){
-            console.log(err)
+            console.log("userLogin DB error : " + err)
             res.send(err)
             return
         }

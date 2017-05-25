@@ -15,6 +15,7 @@ function roomAdd (req, res){
 
     db.room.add(room, function (err, result) {
         if (err) {
+            console.log("roomAdd DB error : " + err)
             res.send(err)
             return
         }
@@ -29,6 +30,7 @@ function roomList (req, res){
     console.log("roomList 호출")
     db.room.list(req.params.userId, function (err, rooms) {
         if(err){
+            console.log("roomList DB error : " + err)
             res.send(err)
             return
         }
