@@ -6,6 +6,7 @@ var util = require('util')
 
 var db = {}
 
+/*====== Schema ======*/
 var UserSchema = new Schema({
     id: String,
     password: String,
@@ -100,7 +101,7 @@ var AppSchema = new Schema({
 }), App = mongoose.model('App', AppSchema)
 
 
-//============init=================
+/*====== init ======*/
 function init(config) {
 
     console.log('db init')
@@ -115,7 +116,9 @@ function init(config) {
    db.on('disconnected', init);
 }
 
-// POST /user/add
+
+/*====== DB function ======*/
+
 function userAdd(user, cb) {
     User.update({
         id: user.id
@@ -123,7 +126,6 @@ function userAdd(user, cb) {
         upsert: true
 
     }, cb)
-
 }
 
 function userGet(id, cb) {
@@ -132,14 +134,7 @@ function userGet(id, cb) {
     }, cb)
 }
 
-// POST /user/login
-function userLogin() {
 
-}
-
-
-
-// POST /room/add
 function roomAdd(room, cb) {
     Room.update({
         name: room.name
@@ -148,7 +143,7 @@ function roomAdd(room, cb) {
     }, cb)
 }
 
-// GET /room/list
+
 function roomList(id, cb) {
     Room.find({
         belongIds: id

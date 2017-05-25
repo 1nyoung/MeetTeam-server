@@ -44,7 +44,7 @@ app.use(cookieParser());
 route_loader.init(app, express.Router());
 
 
-//===== 서버 시작 =====//
+/*====== 서버 시작  ======*/
 
 // 프로세스 종료 시에 데이터베이스 연결 해제
 process.on('SIGTERM', function () {

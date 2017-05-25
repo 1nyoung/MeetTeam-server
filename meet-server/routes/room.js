@@ -1,6 +1,8 @@
 var db = require('../database/db')
 
+// POST /room/add
 function roomAdd (req, res){
+    console.log("roomAdd 호출")
     var body = req.body
     var room
 
@@ -24,6 +26,7 @@ function roomAdd (req, res){
 
 // GET /room/list/:userId
 function roomList (req, res){
+    console.log("roomList 호출")
     db.room.list(req.params.userId, function (err, rooms) {
         if(err){
             res.send(err)
