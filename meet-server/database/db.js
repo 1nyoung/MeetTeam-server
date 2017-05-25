@@ -154,8 +154,8 @@ module.exports = {
     init: init,
     user: {
         add: userAdd,
-        get: userGet,
-        login: userLogin
+        get: userGet
+        //login: userLogin
     },
     room: {
         add: roomAdd,
