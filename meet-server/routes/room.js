@@ -1,8 +1,9 @@
 var db = require('../database/db')
+var logger = require('../lib/logger')
 
 // POST /room/add
 function roomAdd (req, res){
-    console.log("roomAdd 호출")
+    logger.debug("roomAdd 호출")
     var body = req.body
     var room
 
@@ -15,7 +16,7 @@ function roomAdd (req, res){
 
     db.room.add(room, function (err, result) {
         if (err) {
-            console.log("roomAdd DB error : " + err)
+            logger.error("roomAdd DB error : " + err);
             res.send(err)
             return
         }
@@ -27,10 +28,11 @@ function roomAdd (req, res){
 
 // GET /room/list/:userId
 function roomList (req, res){
-    console.log("roomList 호출")
+    logger.debug("roomList 호출")
+
     db.room.list(req.params.userId, function (err, rooms) {
         if(err){
-            console.log("roomList DB error : " + err)
+            logger.error("roomList DB error : " + err)
             res.send(err)
             return
         }

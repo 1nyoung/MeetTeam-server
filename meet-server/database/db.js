@@ -1,8 +1,6 @@
+var util = require('util')
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema
-
-
-var util = require('util')
 
 var db = {}
 
@@ -128,12 +126,19 @@ function userAdd(user, cb) {
     }, cb)
 }
 
-function userGet(id, cb) {
+function userGetById(id, cb) {
     User.findOne({
         id: id
     }, cb)
 }
 
+function userUpdate(id, sess, cb) {
+    User.update({
+        id: id
+    },{
+        $set: { sess: sess}
+    }, cb)
+}
 
 function roomAdd(room, cb) {
     Room.update({
@@ -143,10 +148,15 @@ function roomAdd(room, cb) {
     }, cb)
 }
 
-
 function roomList(id, cb) {
     Room.find({
         belongIds: id
+    },cb)
+}
+
+function roomGetByName(id, cb) {
+    Room.findOne({
+        name: id
     },cb)
 }
 
@@ -154,12 +164,13 @@ module.exports = {
     init: init,
     user: {
         add: userAdd,
-        get: userGet
-        //login: userLogin
+        getById: userGetById,
+        update: userUpdate
     },
     room: {
         add: roomAdd,
-        list: roomList
+        list: roomList,
+        getByName: roomGetByName
     },
     ttable: {},
     map: {},

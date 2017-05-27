@@ -4,9 +4,9 @@ module.exports = {
     db_url: 'mongodb://root:root@ds161410.mlab.com:61410/meetdb',
 	route_info: [
 	    //===== User =====//
-        {file:'./user', path:'/user/login', method:'login', type:'post'},			// user.login
-	    {file:'./user', path:'/user/add', method:'add', type:'post'},		    // user.adduser
-        // {file:'./user', path:'/user/list', method:'listuser', type:'post'}		// user.listuser
+        {file:'./user', path:'/user/login', method:'login', type:'post'},
+	    {file:'./user', path:'/user/add', method:'add', type:'post'},
+        {file:'./user', path:'/user/list', method:'list', type:'post'},
 
         //===== Room =====//
         {file:'./room', path:'/room/list/:userId', method:'list', type:'get'},

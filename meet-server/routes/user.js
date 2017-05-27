@@ -1,9 +1,11 @@
 var crypto = require('crypto')
+var async = require('async')
 var db = require('../database/db')
+var logger = require('../lib/logger')
 
 // POST /user/add
 function userAdd(req, res) {
-    console.log("userAdd 호출")
+    logger.debug("userAdd 호출")
     var body = req.body
     var user
 
@@ -32,36 +34,81 @@ function userAdd(req, res) {
 
 // POST /user/login
 function userLogin(req, res) {
-    console.log("userLogin 호출")
-    //var md5sum = crypto.createHash('md5');
+    logger.debug('userLogin 호출')
     var body = req.body
-    // var sess
-    //
-    // md5sum.update(body.id + body.name);
-    // sess = md5sum.digest('hex');
+    var sess
 
-    db.user.get(body.id, function (err, user) {
+    sess = crypto.randomBytes(10).toString('hex');
+    db.user.update(body.id, sess, function (err, result) {
         if(err){
-            console.log("userLogin DB error : " + err)
+            logger.error(err);
             res.send(err)
             return
         }
-        if (!user) {
-            res.status(401).send('Sorry cant find that!');
-            return
+
+        db.user.getById(body.id, function (err, user) {
+            if(err){
+                logger.error(err);
+                res.send(err)
+                return
+            }
+            if (!user) {
+                res.status(401).send('Sorry cant find that!');
+                return
+            }
+
+            if(body.password != user.password){
+                res.status(401).send('login fail');
+                return
+            }
+
+            res.send({sess: user.sess});
+        })
+    })
+}
+
+// POST /user/list
+function userList(req, res) {
+    logger.debug('userList 호출');
+    var body = req.body
+    var userList = []
+    var funcs = []
+
+    db.room.getByName(body.roomName, function (err, room) {
+        if(err){
+            logger.error("roomList DB error : " + err);
+            res.send(err)
         }
 
-        if(body.password != user.password){
-            res.status(401).send('login fail');
-            return
-        }
+        if(room.belongIds.length > 0){
+            funcs = room.belongIds.map(function (obj) {
+                return function (callback) {
+                    db.user.getById(obj, function (err, user) {
+                        if(err){
+                            callback(err)
+                            return
+                        }
 
-        res.send(user);
+                        userList.push(user)
+                        callback(null)
+                    })
+                }
+            })
+            async.parallel(funcs, function (err) {
+                if(err){
+                    res.err(err)
+                    return
+                }
+
+                res.send(userList)
+            })
+        }
     })
 
 }
 
 module.exports = {
     add: userAdd,
-    login: userLogin
+    login: userLogin,
+    list: userList
 }
