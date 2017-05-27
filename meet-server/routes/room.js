@@ -30,6 +30,21 @@ function roomAdd (req, res){
 function roomList (req, res){
     logger.debug("roomList 호출")
 
+    // 로그인하고나서 세션값만줘서 이렇게 로직 타도록 수정해야함
+    // 아직까진 세션이랑 id같이줘서 아래 로직으로..
+    // db.user.getBySess(req.params.sess, function (err, user) {
+    //     db.room.list(user.id, function (err, rooms) {
+    //         if(err){
+    //             logger.error("roomList DB error : " + err)
+    //             res.send(err)
+    //             return
+    //         }
+    //
+    //         res.send(rooms)
+    //     })
+    //
+    // })
+
     db.room.list(req.params.userId, function (err, rooms) {
         if(err){
             logger.error("roomList DB error : " + err)

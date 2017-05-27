@@ -126,6 +126,12 @@ function userAdd(user, cb) {
     }, cb)
 }
 
+function userGetBySess(sess, cb) {
+    User.findOne({
+        sess: sess
+    }, cb)
+}
+
 function userGetById(id, cb) {
     User.findOne({
         id: id
@@ -165,6 +171,7 @@ module.exports = {
     user: {
         add: userAdd,
         getById: userGetById,
+        getBySess: userGetBySess,
         update: userUpdate
     },
     room: {
