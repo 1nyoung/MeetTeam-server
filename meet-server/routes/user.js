@@ -22,7 +22,7 @@ function userAdd(req, res) {
 
     db.user.add(user, function (err, result) {
         if(err){
-            console.log("userAdd DB error : " + err)
+            logger.error("userAdd DB error : " + err)
             res.send(err)
             return
         }
@@ -41,7 +41,7 @@ function userLogin(req, res) {
     sess = crypto.randomBytes(10).toString('hex');
     db.user.update(body.id, sess, function (err, result) {
         if(err){
-            logger.error(err);
+            logger.error("userUpdate DB error : " + err);
             res.send(err)
             return
         }
@@ -76,7 +76,7 @@ function userList(req, res) {
 
     db.room.getByName(body.roomName, function (err, room) {
         if(err){
-            logger.error("roomList DB error : " + err);
+            logger.error("roomGetByName DB error : " + err);
             res.send(err)
         }
 

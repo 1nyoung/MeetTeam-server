@@ -9,8 +9,9 @@ module.exports = {
         {file:'./user', path:'/user/list', method:'list', type:'post'},
 
         //===== Room =====//
-        {file:'./room', path:'/room/list/:userId', method:'list', type:'get'},
-        {file:'./room', path:'/room/add', method:'add', type:'post'}
+        {file:'./room', path:'/room/list/', method:'list', type:'post'},
+        {file:'./room', path:'/room/add', method:'add', type:'post'},
+        {file:'./room', path:'/room/addUser', method:'addUser', type:'post'}
         // {file:'./room', path:'/room/delete', method:'', type:'post'},
         // {file:'./room', path:'/room/search', method:'', type:'post'},
         //

@@ -160,11 +160,22 @@ function roomList(id, cb) {
     },cb)
 }
 
-function roomGetByName(id, cb) {
+function roomGetByName(roomName, cb) {
     Room.findOne({
-        name: id
+        name: roomName
     },cb)
 }
+
+function roomUpdate(roomName, belongIds, cb) {
+    Room.update({
+        name: roomName
+    }, {
+        $set: {
+            belongIds: belongIds
+        }
+    },cb)
+}
+
 
 module.exports = {
     init: init,
@@ -177,7 +188,8 @@ module.exports = {
     room: {
         add: roomAdd,
         list: roomList,
-        getByName: roomGetByName
+        getByName: roomGetByName,
+        update: roomUpdate
     },
     ttable: {},
     map: {},
