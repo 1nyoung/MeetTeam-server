@@ -9,6 +9,16 @@ function roomList (req, res){
     // 로그인하고나서 세션값만줘서 이렇게 로직 타도록 수정해야함
     // 아직까진 세션이랑 id같이줘서 아래 로직으로..
     db.user.getBySess(req.body.sess, function (err, user) {
+        if (err) {
+            logger.error("userGetBySess DB error : " + err);
+            res.send(err)
+            return
+        }
+
+        if (!user) {
+            logger.error("not found USER ");
+        }
+
         db.room.list(user.id, function (err, rooms) {
             if(err){
                 logger.error("userGetBySess DB error : " + err)
@@ -70,7 +80,6 @@ function roomAddUser (req, res){
     logger.debug("roomAddUser 호출")
     var body = req.body
 
-
     db.user.getBySess(req.body.sess, function (err, user) {
         if (err) {
             logger.error("userGetBySess DB error : " + err);
@@ -86,6 +95,14 @@ function roomAddUser (req, res){
             if(err){
                 logger.error("roomGetByName DB error : " + err);
                 res.send(err)
+                return
+            }
+
+            for(i = 0; i < room.belongIds.length; i++){
+                if(room.belongIds[i] === user.id ){
+                    res.send("ok")
+                    return
+                }
             }
 
             room.belongIds.push(user.id)

@@ -102,6 +102,8 @@ function userList(req, res) {
 
                 res.send(userList)
             })
+        }else{
+            res.send(null)
         }
     })
 

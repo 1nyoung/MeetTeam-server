@@ -157,7 +157,7 @@ function roomAdd(room, cb) {
 function roomList(id, cb) {
     Room.find({
         belongIds: id
-    },cb)
+    }).sort({"_id": -1}).exec(cb)
 }
 
 function roomGetByName(roomName, cb) {
