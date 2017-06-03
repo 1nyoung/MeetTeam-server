@@ -38,45 +38,45 @@ function userLogin(req, res) {
     var body = req.body
     var sess
 
-    sess = crypto.randomBytes(10).toString('hex');
+    sess = crypto.randomBytes(10).toString('hex')
     db.user.update(body.id, sess, function (err, result) {
         if(err){
-            logger.error("userUpdate DB error : " + err);
+            logger.error("userUpdate DB error : " + err)
             res.send(err)
             return
         }
 
         db.user.getById(body.id, function (err, user) {
             if(err){
-                logger.error(err);
+                logger.error(err)
                 res.send(err)
                 return
             }
             if (!user) {
-                res.status(401).send('Sorry cant find that!');
+                res.status(401).send('Sorry cant find that!')
                 return
             }
 
             if(body.password != user.password){
-                res.status(401).send('login fail');
+                res.status(401).send('login fail')
                 return
             }
 
-            res.send({sess: user.sess, id: user.id});
+            res.send({sess: user.sess, id: user.id})
         })
     })
 }
 
 // POST /user/list
 function userList(req, res) {
-    logger.debug('userList 호출');
+    logger.debug('userList 호출')
     var body = req.body
     var userList = []
     var funcs = []
 
     db.room.getByName(body.roomName, function (err, room) {
         if(err){
-            logger.error("roomGetByName DB error : " + err);
+            logger.error("roomGetByName DB error : " + err)
             res.send(err)
         }
 

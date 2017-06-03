@@ -16,7 +16,7 @@ var logger = new (winston.Logger)({
             colorize: false,
             maxsize: 50000000,
             maxFiles: 1000,
-            level: 'info',
+            level: 'debug',
             showLevel: true,
             json: false,
             timestamp: timeStampFormat

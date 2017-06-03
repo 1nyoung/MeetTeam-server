@@ -10,13 +10,15 @@ function roomList (req, res){
     // 아직까진 세션이랑 id같이줘서 아래 로직으로..
     db.user.getBySess(req.body.sess, function (err, user) {
         if (err) {
-            logger.error("userGetBySess DB error : " + err);
+            logger.error("userGetBySess DB error : " + err)
             res.send(err)
             return
         }
 
         if (!user) {
-            logger.error("not found USER ");
+            logger.error("not found USER ")
+            res.send("not found USER ")
+            return
         }
 
         db.room.list(user.id, function (err, rooms) {
@@ -51,7 +53,7 @@ function roomAdd (req, res){
 
     db.user.getBySess(req.body.sess, function (err, user) {
         if (err) {
-            logger.error("userGetBySess DB error : " + err);
+            logger.error("userGetBySess DB error : " + err)
             res.send(err)
             return
         }
@@ -64,7 +66,7 @@ function roomAdd (req, res){
         }
         db.room.add(room, function (err, result) {
             if (err) {
-                logger.error("roomAdd DB error : " + err);
+                logger.error("roomAdd DB error : " + err)
                 res.send(err)
                 return
             }
@@ -82,18 +84,20 @@ function roomAddUser (req, res){
 
     db.user.getBySess(req.body.sess, function (err, user) {
         if (err) {
-            logger.error("userGetBySess DB error : " + err);
+            logger.error("userGetBySess DB error : " + err)
             res.send(err)
             return
         }
 
         if (!user) {
-            logger.error("not found USER ");
+            logger.error("not found USER ")
+            res.send("not found USER ")
+            return
         }
 
         db.room.getByName(body.roomName, function (err, room) {
             if(err){
-                logger.error("roomGetByName DB error : " + err);
+                logger.error("roomGetByName DB error : " + err)
                 res.send(err)
                 return
             }
@@ -108,7 +112,7 @@ function roomAddUser (req, res){
             room.belongIds.push(user.id)
             db.room.update(room.name, room.belongIds, function (err, result) {
                 if(err){
-                    logger.error("roomUpdate DB error : " + err);
+                    logger.error("roomUpdate DB error : " + err)
                     res.send(err)
                 }
 
