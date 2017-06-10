@@ -1,7 +1,8 @@
 var crypto = require('crypto')
 var async = require('async')
-var db = require('../database/db')
+var db = require('../lib/db')
 var logger = require('../lib/logger')
+
 
 // POST /user/add
 function userAdd(req, res) {
@@ -29,8 +30,8 @@ function userAdd(req, res) {
 
         res.send(result)
     })
-
 }
+
 
 // POST /user/login
 function userLogin(req, res) {
@@ -62,10 +63,11 @@ function userLogin(req, res) {
                 return
             }
 
-            res.send({sess: user.sess, id: user.id})
+            res.send({sess: user.sess})
         })
     })
 }
+
 
 // POST /user/list
 function userList(req, res) {
@@ -83,7 +85,7 @@ function userList(req, res) {
         if(room.belongIds.length > 0){
             funcs = room.belongIds.map(function (obj) {
                 return function (callback) {
-                    db.user.getById(obj, function (err, user) {
+                    db.user.getById(obj, 'USER', function (err, user) {
                         if(err){
                             callback(err)
                             return
@@ -106,8 +108,8 @@ function userList(req, res) {
             res.send(null)
         }
     })
-
 }
+
 
 module.exports = {
     add: userAdd,

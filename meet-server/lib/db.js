@@ -99,6 +99,11 @@ var AppSchema = new Schema({
 }), App = mongoose.model('App', AppSchema)
 
 
+var SELECT = {
+    USER: '_id id name email addr phoneNum idNum isProfessor sess'
+}
+
+
 /*====== init ======*/
 function init(config) {
 
@@ -126,17 +131,25 @@ function userAdd(user, cb) {
     }, cb)
 }
 
+
 function userGetBySess(sess, cb) {
     User.findOne({
         sess: sess
     }, cb)
 }
 
-function userGetById(id, cb) {
+
+function userGetById(id, select, cb) {
+    if(typeof select === 'function'){
+        cb = select
+        select = null
+    }
     User.findOne({
         id: id
-    }, cb)
+    })
+    .select(SELECT[select]).exec(cb)
 }
+
 
 function userUpdate(id, sess, cb) {
     User.update({
@@ -146,6 +159,7 @@ function userUpdate(id, sess, cb) {
     }, cb)
 }
 
+
 function roomAdd(room, cb) {
     Room.update({
         name: room.name
@@ -154,17 +168,20 @@ function roomAdd(room, cb) {
     }, cb)
 }
 
+
 function roomList(id, cb) {
     Room.find({
         belongIds: id
     }).sort({"_id": -1}).exec(cb)
 }
 
+
 function roomGetByName(roomName, cb) {
     Room.findOne({
         name: roomName
     },cb)
 }
+
 
 function roomUpdate(roomName, belongIds, cb) {
     Room.update({

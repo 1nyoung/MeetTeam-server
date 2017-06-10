@@ -12,7 +12,7 @@ var bodyParser = require('body-parser')
 var config = require('./config.js')
 
 // 모듈로 분리한 데이터베이스 파일 불러오기
-var db = require('./database/db')
+var db = require('./lib/db')
 
 // 모듈로 분리한 라우팅 파일 불러오기
 var route_loader = require('./routes/route_loader')

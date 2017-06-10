@@ -1,4 +1,4 @@
-var db = require('../database/db')
+var db = require('../lib/db')
 var logger = require('../lib/logger')
 
 
@@ -6,8 +6,6 @@ var logger = require('../lib/logger')
 function roomList (req, res){
     logger.debug("roomList 호출")
 
-    // 로그인하고나서 세션값만줘서 이렇게 로직 타도록 수정해야함
-    // 아직까진 세션이랑 id같이줘서 아래 로직으로..
     db.user.getBySess(req.body.sess, function (err, user) {
         if (err) {
             logger.error("userGetBySess DB error : " + err)
@@ -32,16 +30,6 @@ function roomList (req, res){
         })
 
     })
-
-    // db.room.list(req.params.userId, function (err, rooms) {
-    //     if(err){
-    //         logger.error("roomList DB error : " + err)
-    //         res.send(err)
-    //         return
-    //     }
-    //
-    //     res.send(rooms)
-    // })
 }
 
 
@@ -127,7 +115,6 @@ function roomAddUser (req, res){
          })
     })
 }
-
 
 
 module.exports = {
