@@ -17,7 +17,7 @@ function roomList (req, res){
 
         if (!user) {
             logger.error("not found USER ")
-            res.send("not found USER ")
+            res.status(400).send("not found USER ")
             return
         }
 
@@ -91,7 +91,7 @@ function roomAddUser (req, res){
 
         if (!user) {
             logger.error("not found USER ")
-            res.send("not found USER ")
+            res.status(400).send("not found USER ")
             return
         }
 
@@ -99,6 +99,12 @@ function roomAddUser (req, res){
             if(err){
                 logger.error("roomGetByName DB error : " + err)
                 res.send(err)
+                return
+            }
+
+            if(!room) {
+                logger.error("not found ROOM ")
+                res.status(400).send("not found USER ")
                 return
             }
 

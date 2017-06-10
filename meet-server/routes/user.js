@@ -53,12 +53,12 @@ function userLogin(req, res) {
                 return
             }
             if (!user) {
-                res.status(401).send('Sorry cant find that!')
+                res.status(400).send('Sorry cant find that!')
                 return
             }
 
             if(body.password != user.password){
-                res.status(401).send('login fail')
+                res.status(400).send('login fail')
                 return
             }
 
