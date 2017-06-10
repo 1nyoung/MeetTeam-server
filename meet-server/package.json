@@ -11,11 +11,15 @@
     "url": "https://github.com/1nyoung/MeetTeam-server"
   },
   "dependencies": {
+    "async": "^2.4.1",
     "body-parser": "^1.15.2",
     "cookie-parser": "^1.4.3",
     "express": "^4.14.0",
+    "moment": "^2.18.1",
     "mongoose": "^4.6.6",
-    "serve-static": "^1.11.2"
+    "serve-static": "^1.11.2",
+    "winston": "^2.3.1",
+    "winston-daily-rotate-file": "^1.4.6"
   },
   "author": "InyoungJo",
   "license": "ISC"

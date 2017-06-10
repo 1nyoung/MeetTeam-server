@@ -1,55 +1,137 @@
 var db = require('../database/db')
-var util = require('util')
+var logger = require('../lib/logger')
 
-function roomAdd (req, res){
-    console.log(util.inspect(req.body))
-    var body = req.body
-    var room
 
-    room = {
-        name: body.name,
-        chiefName : body.chiefName,
-        subject : body.subject,
-        belongIds : body.belongIds
-    }
+// POST /room/list
+function roomList (req, res){
+    logger.debug("roomList 호출")
 
-    db.room.add(room, function (err, result) {
+    // 로그인하고나서 세션값만줘서 이렇게 로직 타도록 수정해야함
+    // 아직까진 세션이랑 id같이줘서 아래 로직으로..
+    db.user.getBySess(req.body.sess, function (err, user) {
         if (err) {
+            logger.error("userGetBySess DB error : " + err)
             res.send(err)
             return
         }
 
-        res.send(result)
+        if (!user) {
+            logger.error("not found USER ")
+            res.status(400).send("not found USER ")
+            return
+        }
+
+        db.room.list(user.id, function (err, rooms) {
+            if(err){
+                logger.error("userGetBySess DB error : " + err)
+                res.send(err)
+                return
+            }
+
+            res.send(rooms)
+        })
+
     })
 
-}
-
-function roomAdd2 (req, res){
-    console.log('hhhhhhhh')
-    console.log(util.inspect(req))
-    var body = req.body
-    var room
-    res.send(req.body)
-
-    // room = {
-    //     name: body.name,
-    //     chiefName : body.chiefName,
-    //     subject : body.subject,
-    //     belongIds : body.belongIds
-    // }
-    //
-    // db.room.add(room, function (err, result) {
-    //     if (err) {
+    // db.room.list(req.params.userId, function (err, rooms) {
+    //     if(err){
+    //         logger.error("roomList DB error : " + err)
     //         res.send(err)
     //         return
     //     }
     //
-    //     res.send(result)
+    //     res.send(rooms)
     // })
-
 }
 
+
+// POST /room/add
+function roomAdd (req, res){
+    logger.debug("roomAdd 호출")
+    var body = req.body
+    var room
+
+    db.user.getBySess(req.body.sess, function (err, user) {
+        if (err) {
+            logger.error("userGetBySess DB error : " + err)
+            res.send(err)
+            return
+        }
+
+        room = {
+            name: body.name,
+            chiefName : user.name,
+            subject: body.subject,
+            belongIds: [user.id]
+        }
+        db.room.add(room, function (err, result) {
+            if (err) {
+                logger.error("roomAdd DB error : " + err)
+                res.send(err)
+                return
+            }
+
+            res.send(result)
+        })
+    })
+}
+
+
+// POST /room/addUser
+function roomAddUser (req, res){
+    logger.debug("roomAddUser 호출")
+    var body = req.body
+
+    db.user.getBySess(req.body.sess, function (err, user) {
+        if (err) {
+            logger.error("userGetBySess DB error : " + err)
+            res.send(err)
+            return
+        }
+
+        if (!user) {
+            logger.error("not found USER ")
+            res.status(400).send("not found USER ")
+            return
+        }
+
+        db.room.getByName(body.roomName, function (err, room) {
+            if(err){
+                logger.error("roomGetByName DB error : " + err)
+                res.send(err)
+                return
+            }
+
+            if(!room) {
+                logger.error("not found ROOM ")
+                res.status(400).send("not found USER ")
+                return
+            }
+
+            for(i = 0; i < room.belongIds.length; i++){
+                if(room.belongIds[i] === user.id ){
+                    res.send("ok")
+                    return
+                }
+            }
+
+            room.belongIds.push(user.id)
+            db.room.update(room.name, room.belongIds, function (err, result) {
+                if(err){
+                    logger.error("roomUpdate DB error : " + err)
+                    res.send(err)
+                }
+
+                res.send(result)
+            })
+         })
+    })
+}
+
+
+
 module.exports = {
+    list: roomList,
     add: roomAdd,
-    add2: roomAdd2
+    addUser: roomAddUser
 }

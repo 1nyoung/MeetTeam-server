@@ -1,11 +1,10 @@
+var util = require('util')
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema
 
-
-var util = require('util')
-
 var db = {}
 
+/*====== Schema ======*/
 var UserSchema = new Schema({
     id: String,
     password: String,
@@ -15,13 +14,14 @@ var UserSchema = new Schema({
     addr: String,
     email: String,
     isProfessor: Boolean,
-    rooms: [String]
+    sess: String
 }), User = mongoose.model('User', UserSchema)
 
 var RoomSchema = new Schema({
     name: String,
     chiefName: String,
     subject: String,
+    belongIds: [String]
 }), Room = mongoose.model('Room', RoomSchema)
 
 var TtableSchema = new Schema({
@@ -99,7 +99,7 @@ var AppSchema = new Schema({
 }), App = mongoose.model('App', AppSchema)
 
 
-//============init=================
+/*====== init ======*/
 function init(config) {
 
     console.log('db init')
@@ -114,7 +114,9 @@ function init(config) {
    db.on('disconnected', init);
 }
 
-// POST /user/add
+
+/*====== DB function ======*/
+
 function userAdd(user, cb) {
     User.update({
         id: user.id
@@ -122,25 +124,29 @@ function userAdd(user, cb) {
         upsert: true
 
     }, cb)
-
 }
 
-function userGet(id, cb) {
+function userGetBySess(sess, cb) {
+    User.findOne({
+        sess: sess
+    }, cb)
+}
+
+function userGetById(id, cb) {
     User.findOne({
         id: id
     }, cb)
 }
 
-// POST /user/login
-function userLogin() {
-
+function userUpdate(id, sess, cb) {
+    User.update({
+        id: id
+    },{
+        $set: { sess: sess}
+    }, cb)
 }
 
-
-
-// POST /room/add
 function roomAdd(room, cb) {
-
     Room.update({
         name: room.name
     }, room, {
@@ -148,15 +154,42 @@ function roomAdd(room, cb) {
     }, cb)
 }
 
+function roomList(id, cb) {
+    Room.find({
+        belongIds: id
+    }).sort({"_id": -1}).exec(cb)
+}
+
+function roomGetByName(roomName, cb) {
+    Room.findOne({
+        name: roomName
+    },cb)
+}
+
+function roomUpdate(roomName, belongIds, cb) {
+    Room.update({
+        name: roomName
+    }, {
+        $set: {
+            belongIds: belongIds
+        }
+    },cb)
+}
+
+
 module.exports = {
     init: init,
     user: {
         add: userAdd,
-        get: userGet,
-        login: userLogin
+        getById: userGetById,
+        getBySess: userGetBySess,
+        update: userUpdate
     },
     room: {
-        add: roomAdd
+        add: roomAdd,
+        list: roomList,
+        getByName: roomGetByName,
+        update: roomUpdate
     },
     ttable: {},
     map: {},

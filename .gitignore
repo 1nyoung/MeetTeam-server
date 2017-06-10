@@ -4,5 +4,5 @@
 # Folder
 node_modules
 
-# conf
-*/config.js
+# File
+*.log
