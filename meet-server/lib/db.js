@@ -67,15 +67,17 @@ var TtableSchema = new Schema({
 }), Ttable = mongoose.model('Ttable', TtableSchema)
 
 var MapSchema = new Schema({
+    id: String,
+    roomName: String,
     date: String,
-    place: [
-        {
-            id: String,
-            loc: {
-                'type': {type: String, 'default': 'Point'},
-                'coordinates': [Number]
-            }
-        }
+    places: [
+        // {
+        //     userName: String,
+        //     loc: {
+        //         'type': {type: String, 'default': 'Point'},
+        //         'coordinates': [Number]
+        //     }
+        // }
     ]
 }), Map = mongoose.model('Map', MapSchema)
 
@@ -92,7 +94,7 @@ var ClistSchema = new Schema({
 }), Clist = mongoose.model('Clist', ClistSchema)
 
 var AppSchema = new Schema({
-    roomNum: String,
+    roomName: String,
     decDay: String,
     decTime: String,
     decPlace: String
@@ -194,22 +196,54 @@ function roomUpdate(roomName, belongIds, cb) {
 }
 
 
+function mapAdd(map, cb) {
+    Map.update({
+        id: map.id
+    }, map, {
+        upsert: true
+    }, cb)
+}
+
+
+function mapGetById(mapId, cb) {
+    Map.findOne({
+        id: mapId
+    },cb)
+}
+
+
+function mapUpdate(id, place, cb) {
+    Map.update({
+        id: id
+    },{
+        $push: {
+            places: place
+        }
+    }, cb)
+}
+
+
 module.exports = {
     init: init,
     user: {
-        add: userAdd,
-        getById: userGetById,
+        add:       userAdd,
+        getById:   userGetById,
         getBySess: userGetBySess,
-        update: userUpdate
+        update:    userUpdate
     },
     room: {
-        add: roomAdd,
-        list: roomList,
+        add:       roomAdd,
+        list:      roomList,
         getByName: roomGetByName,
-        update: roomUpdate
+        update:    roomUpdate
     },
     ttable: {},
-    map: {},
+    map: {
+        add:     mapAdd,
+        getById: mapGetById,
+        update:  mapUpdate
+
+    },
     clist: {},
     app: {}
 }
