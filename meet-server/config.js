@@ -22,7 +22,7 @@ module.exports = {
         //
         // //===== Map =====//
         {file:'./map', path:'/map/add', method:'add', type:'post'},
-        // {file:'./map', path:'/map/show', method:'', type:'post'},
+        {file:'./map', path:'/map/show', method:'show', type:'post'}
         // {file:'./map', path:'/map/', method:'', type:'post'},
         //
         // //===== Clist =====//
