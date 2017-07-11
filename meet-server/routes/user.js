@@ -76,7 +76,7 @@ function userList(req, res) {
     var userList = []
     var funcs = []
 
-    db.room.getByTitle(body.roomName, function (err, room) {
+    db.room.getByTitle(body.title, function (err, room) {
         if(err){
             logger.error("roomGetByTitle DB error : " + err)
             res.send(err)
