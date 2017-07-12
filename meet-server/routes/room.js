@@ -16,7 +16,7 @@ function roomAdd (req, res){
         }
 
         room = {
-            name: body.name,
+            title: body.title,
             chiefName : user.name,
             subject: body.subject,
             belongIds: [user.id]
@@ -52,9 +52,9 @@ function roomAddUser (req, res){
             return
         }
 
-        db.room.getByName(body.roomName, function (err, room) {
+        db.room.getByTitle(body.title, function (err, room) {
             if(err){
-                logger.error("roomGetByName DB error : " + err)
+                logger.error("roomGetByTitle DB error : " + err)
                 res.send(err)
                 return
             }
@@ -73,7 +73,7 @@ function roomAddUser (req, res){
             }
 
             room.belongIds.push(user.id)
-            db.room.update(room.name, room.belongIds, function (err, result) {
+            db.room.update(room.title, room.belongIds, function (err, result) {
                 if(err){
                     logger.error("roomUpdate DB error : " + err)
                     res.send(err)

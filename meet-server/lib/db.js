@@ -18,7 +18,7 @@ var UserSchema = new Schema({
 }), User = mongoose.model('User', UserSchema)
 
 var RoomSchema = new Schema({
-    name: String,
+    title: String,
     chiefName: String,
     subject: String,
     belongIds: [String]
@@ -68,7 +68,7 @@ var TtableSchema = new Schema({
 
 var MapSchema = new Schema({
     id: String,
-    roomName: String,
+    roomTitle: String,
     date: String,
     places: [
         // {
@@ -94,7 +94,7 @@ var ClistSchema = new Schema({
 }), Clist = mongoose.model('Clist', ClistSchema)
 
 var AppSchema = new Schema({
-    roomName: String,
+    roomTitle: String,
     decDay: String,
     decTime: String,
     decPlace: String
@@ -164,7 +164,7 @@ function userUpdate(id, sess, cb) {
 
 function roomAdd(room, cb) {
     Room.update({
-        name: room.name
+        title: room.title
     }, room, {
         upsert: true
     }, cb)
@@ -178,16 +178,16 @@ function roomList(id, cb) {
 }
 
 
-function roomGetByName(roomName, cb) {
+function roomGetByTitle(title, cb) {
     Room.findOne({
-        name: roomName
+        title: title
     },cb)
 }
 
 
-function roomUpdate(roomName, belongIds, cb) {
+function roomUpdate(title, belongIds, cb) {
     Room.update({
-        name: roomName
+        title: title
     }, {
         $set: {
             belongIds: belongIds
@@ -234,7 +234,7 @@ module.exports = {
     room: {
         add:       roomAdd,
         list:      roomList,
-        getByName: roomGetByName,
+        getByTitle: roomGetByTitle,
         update:    roomUpdate
     },
     ttable: {},
