@@ -25,45 +25,16 @@ var RoomSchema = new Schema({
 }), Room = mongoose.model('Room', RoomSchema)
 
 var TtableSchema = new Schema({
-    roomNum: String,
+    id: String,
+    roomTitle: String,
+    title: String,
     date: String,
-    table: {
-        mon: {
-            mor: [String],
-            after: [String],
-            even: [String],
-        },
-        tues: {
-            mor: [String],
-            after: [String],
-            even: [String],
-        },
-        wed: {
-            mor: [String],
-            after: [String],
-            even: [String],
-        },
-        thurs: {
-            mor: [String],
-            after: [String],
-            even: [String],
-        },
-        fri: {
-            mor: [String],
-            after: [String],
-            even: [String],
-        },
-        sat: {
-            mor: [String],
-            after: [String],
-            even: [String],
-        },
-        sun: {
-            mor: [String],
-            after: [String],
-            even: [String],
-        }
-    }
+    tables: [
+        // {
+        //     userName: String,
+        //     times: [Number]
+        // }
+    ]
 }), Ttable = mongoose.model('Ttable', TtableSchema)
 
 var MapSchema = new Schema({
@@ -196,6 +167,33 @@ function roomUpdate(title, belongIds, cb) {
 }
 
 
+function ttableAdd(ttable, cb) {
+    Ttable.update({
+        id: ttable.id
+    }, ttable, {
+        upsert: true
+    }, cb)
+}
+
+
+function ttableGetById(ttableId, cb) {
+    Ttable.findOne({
+        id: ttableId
+    },cb)
+}
+
+
+function ttableUpdate(id, table, cb) {
+    Ttable.update({
+        id: id
+    },{
+        $push: {
+            tables: table
+        }
+    }, cb)
+}
+
+
 function mapAdd(map, cb) {
     Map.update({
         id: map.id
@@ -237,12 +235,15 @@ module.exports = {
         getByTitle: roomGetByTitle,
         update:    roomUpdate
     },
-    ttable: {},
+    ttable: {
+        add:     ttableAdd,
+        getById: ttableGetById,
+        update:  ttableUpdate
+    },
     map: {
         add:     mapAdd,
         getById: mapGetById,
         update:  mapUpdate
-
     },
     clist: {},
     app: {}

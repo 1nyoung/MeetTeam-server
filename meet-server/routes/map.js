@@ -30,7 +30,6 @@ function mapAdd (req, res){
     id = md5sum.digest('hex');
 
     db.user.getBySess(body.sess, function (err, user) {
-
         if (err) {
             logger.error("userGetBySess DB error : " + err)
             res.send(err)
@@ -51,7 +50,6 @@ function mapAdd (req, res){
                 return
             }
 
-
             place = {
                 userName: user.name,
                 loc: {
@@ -63,7 +61,7 @@ function mapAdd (req, res){
             if(!map){
                 makeMap({
                     id: id,
-                    roomName: body.roomName,
+                    roomTitle: body.roomTitle,
                     date: body.date,
                     places: [place]
                 })
@@ -91,7 +89,7 @@ function mapShow (req, res){
     var md5sum = crypto.createHash('md5');
     var id
 
-    md5sum.update(body.roomName + body.date);
+    md5sum.update(body.roomTitle + body.date);
     id = md5sum.digest('hex');
 
 

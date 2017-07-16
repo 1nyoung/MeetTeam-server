@@ -16,8 +16,8 @@ module.exports = {
         // {file:'./room', path:'/room/search', method:'', type:'post'},
         //
         // //===== Ttable =====//
-        // {file:'./ttable', path:'/ttable/show', method:'', type:'post'},
-        // {file:'./ttable', path:'/ttable/register', method:'', type:'post'},
+        {file:'./ttable', path:'/ttable/add', method:'add', type:'post'},
+        {file:'./ttable', path:'/ttable/show', method:'show', type:'post'},
         // {file:'./ttable', path:'/ttable/delete', method:'', type:'post'},
         //
         // //===== Map =====//
