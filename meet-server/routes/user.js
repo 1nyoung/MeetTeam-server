@@ -63,7 +63,7 @@ function userLogin(req, res) {
                 return
             }
 
-            res.send({sess: user.sess})
+            res.send({sess: user.sess, name: user.name})
         })
     })
 }
