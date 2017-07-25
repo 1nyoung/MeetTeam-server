@@ -52,17 +52,18 @@ var MapSchema = new Schema({
     ]
 }), Map = mongoose.model('Map', MapSchema)
 
-var ClistSchema = new Schema({
-    roomNum: String,
+var TodoSchema = new Schema({
+    id: String,
+    roomTitle: String,
     todoName: String,
-    schedule: [
-        {
-            isCheck: Boolean,
-            todo: String,
-            dName: String
-        }
+    clist: [
+        // {
+        //     isCheck: Boolean,
+        //     list: String,
+        //     name: String
+        // }
     ]
-}), Clist = mongoose.model('Clist', ClistSchema)
+}), Todo = mongoose.model('Todo', TodoSchema)
 
 var AppSchema = new Schema({
     roomTitle: String,
@@ -182,6 +183,31 @@ function ttableGetById(ttableId, cb) {
     },cb)
 }
 
+// function ttableGetByName(id, userName, cb) {
+//     Ttable.findOne({
+//         $and:[
+//             {
+//                 id: id,
+//             },
+//             {
+//                 tables:{
+//                     $elemMatch:{
+//                         userName: userName
+//                     }
+//                 }
+//             }
+//         ]
+//     }, cb)
+// }
+
+function ttableGetByName(id, userName, cb) {
+    Ttable.findOne({
+        id: id,
+        "tables.userName": userName
+    }, cb)
+}
+//db.col.find({date:'2013-05-20'}, {date:0, visitor:{$elemMatch:{age:30}}})
+
 
 function ttableUpdate(id, table, cb) {
     Ttable.update({
@@ -189,6 +215,17 @@ function ttableUpdate(id, table, cb) {
     },{
         $push: {
             tables: table
+        }
+    }, cb)
+}
+
+function ttableTimesUpdate(id, userName, times, cb) {
+    Ttable.update({
+        id: id,
+        "tables.userName": userName
+    },{
+        $set:{
+            "tables.$.times": times
         }
     }, cb)
 }
@@ -220,6 +257,31 @@ function mapUpdate(id, place, cb) {
     }, cb)
 }
 
+function todoAdd(map, cb) {
+    Todo.update({
+        id: map.id
+    }, map, {
+        upsert: true
+    }, cb)
+}
+
+
+function todoGetById(mapId, cb) {
+    Todo.findOne({
+        id: mapId
+    },cb)
+}
+
+
+function todoUpdate(id, aclist, cb) {
+    Todo.update({
+        id: id
+    },{
+        $push: {
+            clist: aclist
+        }
+    }, cb)
+}
 
 module.exports = {
     init: init,
@@ -236,15 +298,21 @@ module.exports = {
         update:    roomUpdate
     },
     ttable: {
-        add:     ttableAdd,
-        getById: ttableGetById,
-        update:  ttableUpdate
+        add:       ttableAdd,
+        getById:   ttableGetById,
+        getByName: ttableGetByName,
+        update:    ttableUpdate,
+        timesUpdate: ttableTimesUpdate
     },
     map: {
         add:     mapAdd,
         getById: mapGetById,
         update:  mapUpdate
     },
-    clist: {},
+    todo: {
+        add:     todoAdd,
+        getById: todoGetById,
+        update:  todoUpdate
+    },
     app: {}
 }
