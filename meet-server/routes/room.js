@@ -2,40 +2,10 @@ var db = require('../lib/db')
 var logger = require('../lib/logger')
 
 
-// POST /room/list
-function roomList (req, res){
-    logger.debug("roomList 호출")
-
-    db.user.getBySess(req.body.sess, function (err, user) {
-        if (err) {
-            logger.error("userGetBySess DB error : " + err)
-            res.send(err)
-            return
-        }
-
-        if (!user) {
-            logger.error("not found USER ")
-            res.status(400).send("not found USER ")
-            return
-        }
-
-        db.room.list(user.id, function (err, rooms) {
-            if(err){
-                logger.error("userGetBySess DB error : " + err)
-                res.send(err)
-                return
-            }
-
-            res.send(rooms)
-        })
-
-    })
-}
-
-
 // POST /room/add
 function roomAdd (req, res){
     logger.debug("roomAdd 호출")
+
     var body = req.body
     var room
 
@@ -47,11 +17,12 @@ function roomAdd (req, res){
         }
 
         room = {
-            name: body.name,
+            title: body.title,
             chiefName : user.name,
             subject: body.subject,
             belongIds: [user.id]
         }
+
         db.room.add(room, function (err, result) {
             if (err) {
                 logger.error("roomAdd DB error : " + err)
@@ -83,9 +54,9 @@ function roomAddUser (req, res){
             return
         }
 
-        db.room.getByName(body.roomName, function (err, room) {
+        db.room.getByTitle(body.title, function (err, room) {
             if(err){
-                logger.error("roomGetByName DB error : " + err)
+                logger.error("roomGetByTitle DB error : " + err)
                 res.send(err)
                 return
             }
@@ -104,7 +75,7 @@ function roomAddUser (req, res){
             }
 
             room.belongIds.push(user.id)
-            db.room.update(room.name, room.belongIds, function (err, result) {
+            db.room.update(room.title, room.belongIds, function (err, result) {
                 if(err){
                     logger.error("roomUpdate DB error : " + err)
                     res.send(err)
@@ -117,8 +88,39 @@ function roomAddUser (req, res){
 }
 
 
+// POST /room/list
+function roomList (req, res){
+    logger.debug("roomList 호출")
+
+    db.user.getBySess(req.body.sess, function (err, user) {
+        if (err) {
+            logger.error("userGetBySess DB error : " + err)
+            res.send(err)
+            return
+        }
+
+        if (!user) {
+            logger.error("not found USER ")
+            res.status(400).send("not found USER ")
+            return
+        }
+
+        db.room.list(user.id, function (err, rooms) {
+            if(err){
+                logger.error("userGetBySess DB error : " + err)
+                res.send(err)
+                return
+            }
+
+            res.send(rooms)
+        })
+
+    })
+}
+
+
 module.exports = {
-    list: roomList,
     add: roomAdd,
-    addUser: roomAddUser
+    addUser: roomAddUser,
+    list: roomList
 }

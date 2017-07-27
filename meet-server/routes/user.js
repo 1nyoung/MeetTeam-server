@@ -7,6 +7,7 @@ var logger = require('../lib/logger')
 // POST /user/add
 function userAdd(req, res) {
     logger.debug("userAdd 호출")
+
     var body = req.body
     var user
 
@@ -36,6 +37,7 @@ function userAdd(req, res) {
 // POST /user/login
 function userLogin(req, res) {
     logger.debug('userLogin 호출')
+
     var body = req.body
     var sess
 
@@ -63,7 +65,7 @@ function userLogin(req, res) {
                 return
             }
 
-            res.send({sess: user.sess})
+            res.send({sess: user.sess, name: user.name})
         })
     })
 }
@@ -76,9 +78,9 @@ function userList(req, res) {
     var userList = []
     var funcs = []
 
-    db.room.getByName(body.roomName, function (err, room) {
+    db.room.getByTitle(body.title, function (err, room) {
         if(err){
-            logger.error("roomGetByName DB error : " + err)
+            logger.error("roomGetByTitle DB error : " + err)
             res.send(err)
         }
 

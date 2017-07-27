@@ -18,82 +18,57 @@ var UserSchema = new Schema({
 }), User = mongoose.model('User', UserSchema)
 
 var RoomSchema = new Schema({
-    name: String,
+    title: String,
     chiefName: String,
     subject: String,
     belongIds: [String]
 }), Room = mongoose.model('Room', RoomSchema)
 
 var TtableSchema = new Schema({
-    roomNum: String,
+    id: String,
+    roomTitle: String,
+    title: String,
     date: String,
-    table: {
-        mon: {
-            mor: [String],
-            after: [String],
-            even: [String],
-        },
-        tues: {
-            mor: [String],
-            after: [String],
-            even: [String],
-        },
-        wed: {
-            mor: [String],
-            after: [String],
-            even: [String],
-        },
-        thurs: {
-            mor: [String],
-            after: [String],
-            even: [String],
-        },
-        fri: {
-            mor: [String],
-            after: [String],
-            even: [String],
-        },
-        sat: {
-            mor: [String],
-            after: [String],
-            even: [String],
-        },
-        sun: {
-            mor: [String],
-            after: [String],
-            even: [String],
-        }
-    }
+    tables: [
+        // {
+        //     userName: String,
+        //     times: [Number]
+        // }
+    ]
 }), Ttable = mongoose.model('Ttable', TtableSchema)
 
 var MapSchema = new Schema({
+    id: String,
+    roomTitle: String,
     date: String,
-    place: [
-        {
-            id: String,
-            loc: {
-                'type': {type: String, 'default': 'Point'},
-                'coordinates': [Number]
-            }
-        }
+    places: [
+        // {
+        //     userName: String,
+        //     loc: {
+        //         'type': {type: String, 'default': 'Point'},
+        //         'coordinates': [Number]
+        //     }
+        // }
     ]
 }), Map = mongoose.model('Map', MapSchema)
 
-var ClistSchema = new Schema({
-    roomNum: String,
-    todoName: String,
-    schedule: [
-        {
-            isCheck: Boolean,
-            todo: String,
-            dName: String
-        }
+var TaskSchema = new Schema({
+    id: String,
+    roomTitle: String,
+    taskName: String,
+    clist: [
+        // {
+        //     isCheck: Boolean,
+        //     list: String,
+        //     name: String
+        // }
     ]
-}), Clist = mongoose.model('Clist', ClistSchema)
+}), Task = mongoose.model('Task', TaskSchema)
 
 var AppSchema = new Schema({
-    roomNum: String,
-    decDay: String,
+    id: String,
+    roomTitle: String,
+    date: String,
     decTime: String,
     decPlace: String
 }), App = mongoose.model('App', AppSchema)
@@ -127,7 +102,6 @@ function userAdd(user, cb) {
         id: user.id
     }, user, {
         upsert: true
-
     }, cb)
 }
 
@@ -162,7 +136,7 @@ function userUpdate(id, sess, cb) {
 
 function roomAdd(room, cb) {
     Room.update({
-        name: room.name
+        title: room.title
     }, room, {
         upsert: true
     }, cb)
@@ -176,16 +150,16 @@ function roomList(id, cb) {
 }
 
 
-function roomGetByName(roomName, cb) {
+function roomGetByTitle(title, cb) {
     Room.findOne({
-        name: roomName
+        title: title
     },cb)
 }
 
 
-function roomUpdate(roomName, belongIds, cb) {
+function roomUpdate(title, belongIds, cb) {
     Room.update({
-        name: roomName
+        title: title
     }, {
         $set: {
             belongIds: belongIds
@@ -194,22 +168,185 @@ function roomUpdate(roomName, belongIds, cb) {
 }
 
 
+function ttableAdd(ttable, cb) {
+    Ttable.update({
+        id: ttable.id
+    }, ttable, {
+        upsert: true
+    }, cb)
+}
+
+
+function ttableGetById(ttableId, cb) {
+    Ttable.findOne({
+        id: ttableId
+    },cb)
+}
+
+// function ttableGetByName(id, userName, cb) {
+//     Ttable.findOne({
+//         $and:[
+//             {
+//                 id: id,
+//             },
+//             {
+//                 tables:{
+//                     $elemMatch:{
+//                         userName: userName
+//                     }
+//                 }
+//             }
+//         ]
+//     }, cb)
+// }
+
+function ttableGetByName(id, userName, cb) {
+    Ttable.findOne({
+        id: id,
+        "tables.userName": userName
+    }, cb)
+}
+
+
+function ttableUpdate(id, table, cb) {
+    Ttable.update({
+        id: id
+    },{
+        $push: {
+            tables: table
+        }
+    }, cb)
+}
+
+function ttableTimesUpdate(id, userName, times, cb) {
+    Ttable.update({
+        id: id,
+        "tables.userName": userName
+    },{
+        $set:{
+            "tables.$.times": times
+        }
+    }, cb)
+}
+
+
+function mapAdd(map, cb) {
+    Map.update({
+        id: map.id
+    }, map, {
+        upsert: true
+    }, cb)
+}
+
+
+function mapGetById(mapId, cb) {
+    Map.findOne({
+        id: mapId
+    },cb)
+}
+
+
+function mapUpdate(id, place, cb) {
+    Map.update({
+        id: id
+    },{
+        $push: {
+            places: place
+        }
+    }, cb)
+}
+
+
+function taskAdd(task, cb) {
+    Task.update({
+        id: task.id
+    }, task, {
+        upsert: true
+    }, cb)
+}
+
+
+function taskGetById(roomTitle, cb) {
+    Task.find({
+        roomTitle: roomTitle
+    },cb)
+}
+
+
+function taskUpdate(id, aclist, cb) {
+    Task.update({
+        id: id
+    },{
+        $push: {
+            clist: aclist
+        }
+    }, cb)
+}
+
+
+function taskCheckUpdate(id, aclist, cb) {
+    Task.update({
+        id: id,
+        "clist.list": aclist.list,
+        "clist.name": aclist.name
+    },{
+        $set:{
+            "clist.$.isCheck": aclist.isCheck
+        }
+    }, cb)
+}
+
+
+function appAdd(app, cb) {
+    App.update({
+        id: app.id
+    }, app, {
+        upsert: true
+    }, cb)
+}
+
+
+function appGetById(appId, cb) {
+    App.findOne({
+        id: appId
+    },cb)
+}
+
+
 module.exports = {
     init: init,
     user: {
-        add: userAdd,
-        getById: userGetById,
+        add:       userAdd,
+        getById:   userGetById,
         getBySess: userGetBySess,
-        update: userUpdate
+        update:    userUpdate
     },
     room: {
-        add: roomAdd,
-        list: roomList,
-        getByName: roomGetByName,
-        update: roomUpdate
+        add:        roomAdd,
+        list:       roomList,
+        getByTitle: roomGetByTitle,
+        update:     roomUpdate
     },
-    ttable: {},
-    map: {},
-    clist: {},
-    app: {}
+    ttable: {
+        add:         ttableAdd,
+        getById:     ttableGetById,
+        getByName:   ttableGetByName,
+        update:      ttableUpdate,
+        timesUpdate: ttableTimesUpdate
+    },
+    map: {
+        add:     mapAdd,
+        getById: mapGetById,
+        update:  mapUpdate
+    },
+    task: {
+        add:         taskAdd,
+        getById:     taskGetById,
+        update:      taskUpdate,
+        checkUpdate: taskCheckUpdate
+    },
+    app: {
+        add: appAdd,
+        getById: appGetById
+    }
 }
