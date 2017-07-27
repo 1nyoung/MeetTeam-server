@@ -66,8 +66,9 @@ var TaskSchema = new Schema({
 }), Task = mongoose.model('Task', TaskSchema)
 
 var AppSchema = new Schema({
+    id: String,
     roomTitle: String,
-    decDay: String,
+    date: String,
     decTime: String,
     decPlace: String
 }), App = mongoose.model('App', AppSchema)
@@ -265,9 +266,9 @@ function taskAdd(task, cb) {
 }
 
 
-function taskGetById(taskId, cb) {
-    Task.findOne({
-        id: taskId
+function taskGetById(roomTitle, cb) {
+    Task.find({
+        roomTitle: roomTitle
     },cb)
 }
 
@@ -296,6 +297,22 @@ function taskCheckUpdate(id, aclist, cb) {
 }
 
 
+function appAdd(app, cb) {
+    App.update({
+        id: app.id
+    }, app, {
+        upsert: true
+    }, cb)
+}
+
+
+function appGetById(appId, cb) {
+    App.findOne({
+        id: appId
+    },cb)
+}
+
+
 module.exports = {
     init: init,
     user: {
@@ -305,16 +322,16 @@ module.exports = {
         update:    userUpdate
     },
     room: {
-        add:       roomAdd,
-        list:      roomList,
+        add:        roomAdd,
+        list:       roomList,
         getByTitle: roomGetByTitle,
-        update:    roomUpdate
+        update:     roomUpdate
     },
     ttable: {
-        add:       ttableAdd,
-        getById:   ttableGetById,
-        getByName: ttableGetByName,
-        update:    ttableUpdate,
+        add:         ttableAdd,
+        getById:     ttableGetById,
+        getByName:   ttableGetByName,
+        update:      ttableUpdate,
         timesUpdate: ttableTimesUpdate
     },
     map: {
@@ -323,10 +340,13 @@ module.exports = {
         update:  mapUpdate
     },
     task: {
-        add:     taskAdd,
-        getById: taskGetById,
-        update:  taskUpdate,
+        add:         taskAdd,
+        getById:     taskGetById,
+        update:      taskUpdate,
         checkUpdate: taskCheckUpdate
     },
-    app: {}
+    app: {
+        add: appAdd,
+        getById: appGetById
+    }
 }

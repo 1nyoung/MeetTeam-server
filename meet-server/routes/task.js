@@ -57,7 +57,6 @@ function taskClistAdd (req, res){
     var md5sum = crypto.createHash('md5');
     var id, aclist
 
-
     md5sum.update(body.roomTitle + body.taskName);
     id = md5sum.digest('hex');
 
@@ -129,20 +128,15 @@ function taskShow (req, res){
     logger.debug("taskShow 호출")
 
     var body = req.body
-    var md5sum = crypto.createHash('md5');
-    var id
 
-    md5sum.update(body.roomTitle + body.date);
-    id = md5sum.digest('hex');
-
-    db.task.getById(id, function (err, task) {
+    db.task.getById(body.roomTitle, function (err, task) {
         if(err) {
             logger.error("taskGetById DB error : " + err)
             res.send(err)
             return
         }
 
-        if(!ttable){
+        if(!task){
             res.status(400).send('Sorry cant find that!')
             return
         }
@@ -153,7 +147,7 @@ function taskShow (req, res){
 
 
 module.exports = {
-    add: taskAdd,
+    add:      taskAdd,
     clistAdd: taskClistAdd,
-    show: taskShow
+    show:     taskShow
 }

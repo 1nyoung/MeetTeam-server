@@ -26,7 +26,7 @@ function mapAdd (req, res){
         })
     }
 
-    md5sum.update(body.roomName + body.date);
+    md5sum.update(body.roomTitle + body.date);
     id = md5sum.digest('hex');
 
     db.user.getBySess(body.sess, function (err, user) {

@@ -28,11 +28,11 @@ module.exports = {
         // //===== task =====//
         {file:'./task', path:'/task/add', method:'add', type:'post'},
         {file:'./task', path:'/task/clistAdd', method:'clistAdd', type:'post'},
-        {file:'./task', path:'/task/show', method:'show', type:'post'}
+        {file:'./task', path:'/task/show', method:'show', type:'post'},
         //
         // //===== App =====//
-        // {file:'./app', path:'/app/show', method:'', type:'post'},
-        // {file:'./app', path:'/app/register', method:'', type:'post'},
+        {file:'./app', path:'/app/add', method:'add', type:'post'},
+        {file:'./app', path:'/app/show', method:'show', type:'post'},
         // {file:'./app', path:'/app/', method:'', type:'post'}
     ]
 }
