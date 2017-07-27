@@ -7,6 +7,7 @@ var logger = require('../lib/logger')
 // POST /user/add
 function userAdd(req, res) {
     logger.debug("userAdd 호출")
+
     var body = req.body
     var user
 
@@ -36,6 +37,7 @@ function userAdd(req, res) {
 // POST /user/login
 function userLogin(req, res) {
     logger.debug('userLogin 호출')
+
     var body = req.body
     var sess
 

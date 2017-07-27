@@ -92,7 +92,6 @@ function mapShow (req, res){
     md5sum.update(body.roomTitle + body.date);
     id = md5sum.digest('hex');
 
-
     db.map.getById(id, function (err, map) {
         if(err) {
             logger.error("mapGetById DB error : " + err)

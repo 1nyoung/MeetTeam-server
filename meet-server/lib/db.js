@@ -101,7 +101,6 @@ function userAdd(user, cb) {
         id: user.id
     }, user, {
         upsert: true
-
     }, cb)
 }
 
@@ -206,7 +205,6 @@ function ttableGetByName(id, userName, cb) {
         "tables.userName": userName
     }, cb)
 }
-//db.col.find({date:'2013-05-20'}, {date:0, visitor:{$elemMatch:{age:30}}})
 
 
 function ttableUpdate(id, table, cb) {
@@ -282,6 +280,7 @@ function todoUpdate(id, aclist, cb) {
         }
     }, cb)
 }
+
 
 module.exports = {
     init: init,
