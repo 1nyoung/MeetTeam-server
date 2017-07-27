@@ -5,6 +5,7 @@ var logger = require('../lib/logger')
 // POST /room/add
 function roomAdd (req, res){
     logger.debug("roomAdd 호출")
+
     var body = req.body
     var room
 
@@ -21,6 +22,7 @@ function roomAdd (req, res){
             subject: body.subject,
             belongIds: [user.id]
         }
+
         db.room.add(room, function (err, result) {
             if (err) {
                 logger.error("roomAdd DB error : " + err)
