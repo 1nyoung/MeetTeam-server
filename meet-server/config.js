@@ -22,13 +22,13 @@ module.exports = {
         //
         // //===== Map =====//
         {file:'./map', path:'/map/add', method:'add', type:'post'},
-        {file:'./map', path:'/map/show', method:'show', type:'post'}
+        {file:'./map', path:'/map/show', method:'show', type:'post'},
         // {file:'./map', path:'/map/', method:'', type:'post'},
         //
-        // //===== Clist =====//
-        // {file:'./clist', path:'/clist/list', method:'', type:'post'},
-        // {file:'./clist', path:'/clist/register', method:'', type:'post'},
-        // {file:'./clist', path:'/clist/', method:'', type:'post'},
+        // //===== task =====//
+        {file:'./task', path:'/task/add', method:'add', type:'post'},
+        {file:'./task', path:'/task/clistAdd', method:'clistAdd', type:'post'},
+        {file:'./task', path:'/task/show', method:'show', type:'post'}
         //
         // //===== App =====//
         // {file:'./app', path:'/app/show', method:'', type:'post'},

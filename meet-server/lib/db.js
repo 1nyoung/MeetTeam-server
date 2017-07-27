@@ -52,10 +52,10 @@ var MapSchema = new Schema({
     ]
 }), Map = mongoose.model('Map', MapSchema)
 
-var TodoSchema = new Schema({
+var TaskSchema = new Schema({
     id: String,
     roomTitle: String,
-    todoName: String,
+    taskName: String,
     clist: [
         // {
         //     isCheck: Boolean,
@@ -63,7 +63,7 @@ var TodoSchema = new Schema({
         //     name: String
         // }
     ]
-}), Todo = mongoose.model('Todo', TodoSchema)
+}), Task = mongoose.model('Task', TaskSchema)
 
 var AppSchema = new Schema({
     roomTitle: String,
@@ -255,24 +255,24 @@ function mapUpdate(id, place, cb) {
     }, cb)
 }
 
-function todoAdd(map, cb) {
-    Todo.update({
-        id: map.id
-    }, map, {
+function taskAdd(task, cb) {
+    Task.update({
+        id: task.id
+    }, task, {
         upsert: true
     }, cb)
 }
 
 
-function todoGetById(mapId, cb) {
-    Todo.findOne({
-        id: mapId
+function taskGetById(taskId, cb) {
+    Task.findOne({
+        id: taskId
     },cb)
 }
 
 
-function todoUpdate(id, aclist, cb) {
-    Todo.update({
+function taskUpdate(id, aclist, cb) {
+    Task.update({
         id: id
     },{
         $push: {
@@ -308,10 +308,10 @@ module.exports = {
         getById: mapGetById,
         update:  mapUpdate
     },
-    todo: {
-        add:     todoAdd,
-        getById: todoGetById,
-        update:  todoUpdate
+    task: {
+        add:     taskAdd,
+        getById: taskGetById,
+        update:  taskUpdate
     },
     app: {}
 }
