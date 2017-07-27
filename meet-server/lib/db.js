@@ -255,6 +255,7 @@ function mapUpdate(id, place, cb) {
     }, cb)
 }
 
+
 function taskAdd(task, cb) {
     Task.update({
         id: task.id
@@ -277,6 +278,19 @@ function taskUpdate(id, aclist, cb) {
     },{
         $push: {
             clist: aclist
+        }
+    }, cb)
+}
+
+
+function taskCheckUpdate(id, aclist, cb) {
+    Task.update({
+        id: id,
+        "clist.list": aclist.list,
+        "clist.name": aclist.name
+    },{
+        $set:{
+            "clist.$.isCheck": aclist.isCheck
         }
     }, cb)
 }
@@ -311,7 +325,8 @@ module.exports = {
     task: {
         add:     taskAdd,
         getById: taskGetById,
-        update:  taskUpdate
+        update:  taskUpdate,
+        checkUpdate: taskCheckUpdate
     },
     app: {}
 }

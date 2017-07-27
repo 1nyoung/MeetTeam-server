@@ -57,17 +57,6 @@ function taskClistAdd (req, res){
     var md5sum = crypto.createHash('md5');
     var id, aclist
 
-    function maketask(task) {
-        db.task.add(task, function (err, result) {
-            if(err) {
-                logger.error("taskAdd DB error : " + err)
-                res.send(err)
-                return
-            }
-
-            res.send(result)
-        })
-    }
 
     md5sum.update(body.roomTitle + body.taskName);
     id = md5sum.digest('hex');
@@ -92,31 +81,44 @@ function taskClistAdd (req, res){
                 return
             }
 
+            if(!task){
+                logger.error("not found TASK ")
+                res.status(400).send("not found TASK ")
+                return
+            }
+
             aclist = {
-                isCheck: body.isCheck || false,
                 list: body.list,
                 name: body.name
             }
 
-            if(!task){
-                maketask({
-                    id: id,
-                    roomTitle: body.roomTitle,
-                    taskName: body.taskName,
-                    clist: [aclist]
-                })
-                return
-            }
+            if(body.isCheck){
+                aclist.isCheck = body.isCheck
 
-            db.task.update(id, aclist, function (err, result) {
-                if(err) {
-                    logger.error("taskUpdate DB error : " + err)
-                    res.send(err)
+                db.task.checkUpdate(id, aclist, function (err, result) {
+                    if(err) {
+                        logger.error("taskUpdate DB error : " + err)
+                        res.send(err)
+                        return
+                    }
+
+                    res.send(result)
                     return
-                }
+                })
+            }else{
+                aclist.isCheck = false
 
-                res.send(result)
-            })
+                db.task.update(id, aclist, function (err, result) {
+                    if(err) {
+                        logger.error("taskUpdate DB error : " + err)
+                        res.send(err)
+                        return
+                    }
+
+                    res.send(result)
+                    return
+                })
+            }
         })
     })
 }
@@ -133,9 +135,9 @@ function taskShow (req, res){
     md5sum.update(body.roomTitle + body.date);
     id = md5sum.digest('hex');
 
-    db.ttable.getById(id, function (err, ttable) {
+    db.task.getById(id, function (err, task) {
         if(err) {
-            logger.error("ttableGetById DB error : " + err)
+            logger.error("taskGetById DB error : " + err)
             res.send(err)
             return
         }
@@ -145,7 +147,7 @@ function taskShow (req, res){
             return
         }
 
-        res.send(ttable)
+        res.send(task)
     })
 }
 
