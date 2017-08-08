@@ -29,7 +29,6 @@ function taskAdd (req, res){
             res.status(400).send("not found USER ")
             return
         }
-        // task 만들고 그리고나서 추가
 
         task = {
             id: id,

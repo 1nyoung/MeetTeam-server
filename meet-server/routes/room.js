@@ -114,7 +114,6 @@ function roomList (req, res){
 
             res.send(rooms)
         })
-
     })
 }
 
