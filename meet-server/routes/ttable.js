@@ -1,6 +1,7 @@
 var crypto = require('crypto')
 
 var async = require('async')
+var util = require('util')
 
 var db = require('../lib/db')
 var logger = require('../lib/logger')
@@ -29,88 +30,99 @@ function ttableAdd (req, res){
     md5sum.update(body.roomTitle + body.date);
     id = md5sum.digest('hex');
 
-    db.user.getBySess(body.sess, function (err, user) {
-        if (err) {
-            logger.error("userGetBySess DB error : " + err)
-            res.send(err)
-            return
-        }
-
-        if (!user) {
-            logger.error("not found USER ")
-            res.status(400).send("not found USER ")
-            return
-        }
-
-        db.ttable.getById(id, function (err, ttable) {
-            if(err) {
-                logger.error("ttableGetById DB error : " + err)
-                res.send(err)
-                return
-            }
-
-            table = {
-                userName: user.name,
-                times: body.times
-            }
-
-            if(!ttable){
-                makeTtable({
-                    id: id,
-                    roomTitle: body.roomTitle,
-                    date: body.date,
-                    tables: [table]
-                })
-                return
-            }
-
-            db.ttable.getByName(id, user.name, function (err, ttable) {
-                if(err) {
-                    logger.error("ttableGetByName DB error : " + err)
-                    res.send(err)
+    async.waterfall([
+        //세션으로 user 찾아서 넘기기
+        function (callback) {
+            db.user.getBySess(body.sess, function (err, user) {
+                if (err) {
+                    logger.error("userGetBySess DB error : " + err)
+                    callback(err)
                     return
                 }
 
-                //userName에 없을경우
+                if (!user) {
+                    logger.error("not found USER ")
+                    //res.status(400).send("not found USER ")
+                    callback("not found USER ")
+                    return
+                }
+                callback(null, user)
+            })
+        },
+        //ttable Id로 ttable 찾아서 존재하지 않으면 makeTtable 존재하면 그다음으로
+        function (user, callback) {
+            db.ttable.getById(id, function (err, ttable) {
+                if(err) {
+                    logger.error("ttableGetById DB error : " + err)
+                    callback(err)
+                    return
+                }
+
+                table = {
+                    userName: user.name,
+                    times: body.times
+                }
+                
+                //ttable 없을 경우 waterfall 나가기
+                if(!ttable){
+                    makeTtable({
+                        id: id,
+                        roomTitle: body.roomTitle,
+                        date: body.date,
+                        tables: [table]
+                    })
+                    return
+                }
+                callback(null, user)
+            })
+        },
+        //ttable에 userName이 내가 있냐 없냐
+        function (user, callback) {
+            db.ttable.getByName(id, user.name, function (err, ttable) {
+                if(err) {
+                    logger.error("ttableGetByName DB error : " + err)
+                    callback(err)
+                    return
+                }
+
+                //userName에 없을 경우 waterfall 나가기
                 if(!ttable){
                     db.ttable.update(id, table, function (err, result) {
                         if(err) {
                             logger.error("ttableUpdate DB error : " + err)
-                            res.send(err)
+                            callback(err)
                             return
                         }
 
-                        res.send(result)
+                        return
                     })
                 }
 
-                // //userName에 있을경우 times가져와가지고 중복 없애고 그배열로 덮어 씌우기
-                // var matchTable = ttable.tables.filter(function (item) {
-                //     return item.userName === user.name
-                // })
-                //
-                // console.log(matchTable[0].times)
-                // console.log(body.times)
-                // //table.times = body.times.concat(matchTable[0].times)
-                //
-                // var set = new Set(body.times.concat(matchTable[0].times))
-                // console.log(set)
-
-                db.ttable.timesUpdate(id, user.name, body.times, function (err, result) {
-                    if(err) {
-                        logger.error("ttableUpdate DB error : " + err)
-                        res.send(err)
-                        return
-                    }
-
-                    res.send(result)
-                })
+                callback(null, user)
             })
+        },
+        function (user, callback) {
+            db.ttable.timesUpdate(id, user.name, body.times, function (err, result) {
+                if(err) {
+                    logger.error("ttableUpdate DB error : " + err)
+                    callback(err)
+                    return
+                }
 
+                callback(null, result)
+            })
+        }
+    ], function (err, results) {
+        if(err){
+            logger.error("ttableAdd waterfall error : " + util.inspect(err))
+            res.send(err)
+            return
+        }
 
-        })
+        res.send(results)
     })
 }
+
 
 // POST /ttable/show
 function ttableShow (req, res){
