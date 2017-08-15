@@ -59,8 +59,8 @@ function ttableAdd (req, res){
                 }
 
                 table = {
-                    userName: user.name,
-                    times: body.times
+                    time: body.time,
+                    userNames: [user.name]
                 }
                 
                 //ttable 없을 경우 waterfall 나가기
@@ -134,7 +134,6 @@ function ttableShow (req, res){
 
     md5sum.update(body.roomTitle + body.date);
     id = md5sum.digest('hex');
-
 
     db.ttable.getById(id, function (err, ttable) {
         if(err) {

@@ -31,8 +31,8 @@ var TtableSchema = new Schema({
     date: String,
     tables: [
         // {
-        //     userName: String,
-        //     times: [Number]
+        //     idx: String,
+        //     userNames: [String]
         // }
     ]
 }), Ttable = mongoose.model('Ttable', TtableSchema)
