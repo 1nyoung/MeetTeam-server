@@ -210,9 +210,19 @@ function ttableGetByTime(id, time, cb) {
 
 function ttableGetByUserName(id, time, userName, cb) {
     Ttable.findOne({
-        id: id,
-        "tables.time": time,
-        "tables.userNames": userName
+        $and:[
+            {
+                id: id,
+            },
+            {
+                tables:{
+                    $elemMatch:{
+                        time: time,
+                        userNames: userName
+                    }
+                }
+            }
+        ]
     }, cb)
 }
 

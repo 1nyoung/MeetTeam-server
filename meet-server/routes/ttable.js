@@ -104,7 +104,7 @@ function ttableAdd (req, res){
                 callback(null, user)
             })
         },
-        //userNames에 있냐없냐
+        //userNames에 있냐 없냐
         function (user, callback) {
             db.ttable.getByUserName(id, body.time, user.name, function (err, ttable) {
                 if(err){
@@ -113,7 +113,7 @@ function ttableAdd (req, res){
                     return
                 }
 
-                // 없으면 추가하고 waterfall 나가기
+                //없으면 추가하고 waterfall 나가기
                 if(!ttable){
                     db.ttable.userNamesUpdate(id, body.time, user.name, function (err, result) {
                         if(err) {
@@ -128,7 +128,7 @@ function ttableAdd (req, res){
                     return
                 }
 
-                // 있으면 삭제
+                //있으면 삭제
                 db.ttable.userNameDelete(id, body.time, user.name, function (err, result) {
                     if(err) {
                         logger.error("ttableUserNameDelete DB error : " + err)
