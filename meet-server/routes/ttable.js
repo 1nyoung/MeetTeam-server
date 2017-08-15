@@ -71,21 +71,22 @@ function ttableAdd (req, res){
                         date: body.date,
                         tables: [table]
                     })
+
                     return
                 }
                 callback(null, user)
             })
         },
-        //ttable에 userName이 내가 있냐 없냐
+        //ttable에 time이 있냐 없냐
         function (user, callback) {
-            db.ttable.getByName(id, user.name, function (err, ttable) {
+            db.ttable.getByTime(id, body.time, function (err, ttable) {
                 if(err) {
                     logger.error("ttableGetByName DB error : " + err)
                     callback(err)
                     return
                 }
 
-                //userName에 없을 경우 waterfall 나가기
+                //time이 없을 경우 waterfall 나가기
                 if(!ttable){
                     db.ttable.update(id, table, function (err, result) {
                         if(err) {
@@ -94,23 +95,51 @@ function ttableAdd (req, res){
                             return
                         }
 
-                        return
+                        res.send(result)
                     })
+
+                    return
                 }
 
                 callback(null, user)
             })
         },
+        //userNames에 있냐없냐
         function (user, callback) {
-            db.ttable.timesUpdate(id, user.name, body.times, function (err, result) {
-                if(err) {
-                    logger.error("ttableUpdate DB error : " + err)
+            db.ttable.getByUserName(id, body.time, user.name, function (err, ttable) {
+                if(err){
+                    logger.error("ttablGetByUserName DB error : " + err)
                     callback(err)
                     return
                 }
 
-                callback(null, result)
+                // 없으면 추가하고 waterfall 나가기
+                if(!ttable){
+                    db.ttable.userNamesUpdate(id, body.time, user.name, function (err, result) {
+                        if(err) {
+                            logger.error("ttableUserNamesUpdate DB error : " + err)
+                            callback(err)
+                            return
+                        }
+
+                        res.send(result)
+                        return
+                    })
+                    return
+                }
+
+                // 있으면 삭제
+                db.ttable.userNameDelete(id, body.time, user.name, function (err, result) {
+                    if(err) {
+                        logger.error("ttableUserNameDelete DB error : " + err)
+                        callback(err)
+                        return
+                    }
+
+                    callback(null, result)
+                })
             })
+
         }
     ], function (err, results) {
         if(err){

@@ -200,10 +200,19 @@ function ttableGetById(ttableId, cb) {
 //     }, cb)
 // }
 
-function ttableGetByName(id, userName, cb) {
+function ttableGetByTime(id, time, cb) {
     Ttable.findOne({
         id: id,
-        "tables.userName": userName
+        "tables.time": time
+    }, cb)
+}
+
+
+function ttableGetByUserName(id, time, userName, cb) {
+    Ttable.findOne({
+        id: id,
+        "tables.time": time,
+        "tables.userNames": userName
     }, cb)
 }
 
@@ -218,13 +227,26 @@ function ttableUpdate(id, table, cb) {
     }, cb)
 }
 
-function ttableTimesUpdate(id, userName, times, cb) {
+
+function ttableUserNamesUpdate(id, time, userName, cb) {
     Ttable.update({
         id: id,
-        "tables.userName": userName
+        "tables.time": time
     },{
-        $set:{
-            "tables.$.times": times
+        $push:{
+            "tables.$.userNames": userName
+        }
+    }, cb)
+}
+
+
+function ttableUserNameDelete(id, time, userName, cb) {
+    Ttable.update({
+        id: id,
+        "tables.time": time
+    },{
+        $pull:{
+            "tables.$.userNames": userName
         }
     }, cb)
 }
@@ -328,11 +350,13 @@ module.exports = {
         update:     roomUpdate
     },
     ttable: {
-        add:         ttableAdd,
-        getById:     ttableGetById,
-        getByName:   ttableGetByName,
-        update:      ttableUpdate,
-        timesUpdate: ttableTimesUpdate
+        add:               ttableAdd,
+        getById:           ttableGetById,
+        getByTime:         ttableGetByTime,
+        getByUserName:     ttableGetByUserName,
+        update:            ttableUpdate,
+        userNamesUpdate:   ttableUserNamesUpdate,
+        userNameDelete:    ttableUserNameDelete
     },
     map: {
         add:     mapAdd,
