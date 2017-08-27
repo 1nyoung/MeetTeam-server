@@ -305,7 +305,28 @@ function taskRemove(id, cb) {
 }
 
 
-function taskGetById(roomTitle, cb) {
+function taskClistRemove(id, list, name, cb) {
+    Ttable.update({
+        id: id,
+    },{
+        $pull: {
+            "clist": {
+                list: list,
+                name: name
+            }
+        }
+    }, cb)
+}
+
+
+function taskGetById(id, cb) {
+    Task.find({
+        id: id
+    },cb)
+}
+
+
+function taskGetByRoomTitle(roomTitle, cb) {
     Task.find({
         roomTitle: roomTitle
     },cb)
@@ -381,11 +402,13 @@ module.exports = {
         update:  mapUpdate
     },
     task: {
-        add:         taskAdd,
-        remove:      taskRemove,
-        getById:     taskGetById,
-        update:      taskUpdate,
-        checkUpdate: taskCheckUpdate
+        add:            taskAdd,
+        remove:         taskRemove,
+        clistRemove:    taskClistRemove,
+        getById:        taskGetById,
+        getByRoomTitle: taskGetByRoomTitle,
+        update:         taskUpdate,
+        checkUpdate:    taskCheckUpdate
     },
     app: {
         add: appAdd,

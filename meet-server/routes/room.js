@@ -49,8 +49,8 @@ function roomAddUser (req, res){
         }
 
         if (!user) {
-            logger.error("not found USER ")
-            res.status(400).send("not found USER ")
+            logger.error("not found USER")
+            res.status(400).send("not found USER")
             return
         }
 
@@ -61,9 +61,9 @@ function roomAddUser (req, res){
                 return
             }
 
-            if(!room) {
-                logger.error("not found ROOM ")
-                res.status(400).send("not found USER ")
+            if(room.length === 0) {
+                logger.error("not found ROOM")
+                res.status(400).send("not found ROOM")
                 return
             }
 
@@ -100,8 +100,8 @@ function roomList (req, res){
         }
 
         if (!user) {
-            logger.error("not found USER ")
-            res.status(400).send("not found USER ")
+            logger.error("not found USER")
+            res.status(400).send("not found USER")
             return
         }
 

@@ -29,6 +29,7 @@ module.exports = {
         {file:'./task', path:'/task/add', method:'add', type:'post'},
         {file:'./task', path:'/task/remove', method:'remove', type:'post'},
         {file:'./task', path:'/task/clistAdd', method:'clistAdd', type:'post'},
+        {file:'./task', path:'/task/clistRemove', method:'clistRemove', type:'post'},
         {file:'./task', path:'/task/show', method:'show', type:'post'},
         //
         // //===== App =====//

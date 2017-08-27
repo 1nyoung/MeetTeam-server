@@ -25,8 +25,8 @@ function taskAdd (req, res){
         }
 
         if (!user) {
-            logger.error("not found USER ")
-            res.status(400).send("not found USER ")
+            logger.error("not found USER")
+            res.status(400).send("not found USER")
             return
         }
 
@@ -68,8 +68,8 @@ function taskRemove (req, res){
         }
 
         if (!user) {
-            logger.error("not found USER ")
-            res.status(400).send("not found USER ")
+            logger.error("not found USER")
+            res.status(400).send("not found USER")
             return
         }
 
@@ -98,64 +98,87 @@ function taskClistAdd (req, res){
     md5sum.update(body.roomTitle + body.taskName);
     id = md5sum.digest('hex');
 
-    db.user.getBySess(body.sess, function (err, user) {
-        if (err) {
-            logger.error("userGetBySess DB error : " + err)
+    db.task.getById(id, function (err, task) {
+        if(err) {
+            logger.error("ttableGetById DB error : " + err)
             res.send(err)
             return
         }
 
-        if (!user) {
-            logger.error("not found USER ")
-            res.status(400).send("not found USER ")
+        if(task.length === 0){
+            logger.error("not found TASK")
+            res.status(400).send("not found TASK")
             return
         }
 
-        db.task.getById(id, function (err, task) {
+        aclist = {
+            list: body.list,
+            name: body.name
+        }
+
+        if(body.isCheck){
+            aclist.isCheck = body.isCheck
+
+            db.task.checkUpdate(id, aclist, function (err, result) {
+                if(err) {
+                    logger.error("taskUpdate DB error : " + err)
+                    res.send(err)
+                    return
+                }
+
+                res.send(result)
+                return
+            })
+        }else{
+            aclist.isCheck = false
+
+            db.task.update(id, aclist, function (err, result) {
+                if(err) {
+                    logger.error("taskUpdate DB error : " + err)
+                    res.send(err)
+                    return
+                }
+
+                res.send(result)
+                return
+            })
+        }
+    })
+}
+
+
+// POST /task/clistRemove
+function taskClistRemove (req, res){
+    logger.debug("taskClistRemove 호출")
+
+    var body = req.body
+    var md5sum = crypto.createHash('md5');
+    var id
+
+    md5sum.update(body.roomTitle + body.taskName);
+    id = md5sum.digest('hex');
+
+    db.task.getById(id, function (err, task) {
+        if(err) {
+            logger.error("ttableGetById DB error : " + err)
+            res.send(err)
+            return
+        }
+
+        if(task.length === 0){
+            logger.error("not found TASK")
+            res.status(400).send("not found TASK")
+            return
+        }
+
+        db.task.clistRemove(id, body.ist, body.name, function (err, result) {
             if(err) {
-                logger.error("ttableGetById DB error : " + err)
+                logger.error("taskClistRemove DB error : " + err)
                 res.send(err)
                 return
             }
 
-            if(!task){
-                logger.error("not found TASK ")
-                res.status(400).send("not found TASK ")
-                return
-            }
-
-            aclist = {
-                list: body.list,
-                name: body.name
-            }
-
-            if(body.isCheck){
-                aclist.isCheck = body.isCheck
-
-                db.task.checkUpdate(id, aclist, function (err, result) {
-                    if(err) {
-                        logger.error("taskUpdate DB error : " + err)
-                        res.send(err)
-                        return
-                    }
-
-                    res.send(result)
-                    return
-                })
-            }else{
-                aclist.isCheck = false
-
-                db.task.update(id, aclist, function (err, result) {
-                    if(err) {
-                        logger.error("taskUpdate DB error : " + err)
-                        res.send(err)
-                        return
-                    }
-
-                    res.send(result)
-                    return
-                })
-            }
+            res.send(result)
         })
     })
 }
@@ -167,15 +190,15 @@ function taskShow (req, res){
 
     var body = req.body
 
-    db.task.getById(body.roomTitle, function (err, task) {
+    db.task.getByRoomTitle(body.roomTitle, function (err, task) {
         if(err) {
             logger.error("taskGetById DB error : " + err)
             res.send(err)
             return
         }
 
-        if(!task){
-            res.status(400).send('Sorry cant find that!')
+        if(task.length === 0){
+            res.status(400).send("not found TASK")
             return
         }
 
@@ -185,8 +208,9 @@ function taskShow (req, res){
 
 
 module.exports = {
-    add:      taskAdd,
-    remove:   taskRemove,
-    clistAdd: taskClistAdd,
-    show:     taskShow
+    add:         taskAdd,
+    remove:      taskRemove,
+    clistAdd:    taskClistAdd,
+    clistRemove: taskClistRemove,
+    show:        taskShow
 }
