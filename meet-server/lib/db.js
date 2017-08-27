@@ -306,7 +306,7 @@ function taskRemove(id, cb) {
 
 
 function taskClistRemove(id, list, name, cb) {
-    Ttable.update({
+    Task.update({
         id: id,
     },{
         $pull: {

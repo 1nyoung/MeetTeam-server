@@ -171,7 +171,7 @@ function taskClistRemove (req, res){
             return
         }
 
-        db.task.clistRemove(id, body.ist, body.name, function (err, result) {
+        db.task.clistRemove(id, body.list, body.name, function (err, result) {
             if(err) {
                 logger.error("taskClistRemove DB error : " + err)
                 res.send(err)
