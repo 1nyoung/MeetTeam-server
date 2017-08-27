@@ -271,6 +271,19 @@ function mapAdd(map, cb) {
 }
 
 
+function mapPlaceRemove(id, userName, cb) {
+    Map.update({
+        id: id,
+    },{
+        $pull: {
+            "places": {
+                userName: userName
+            }
+        }
+    }, cb)
+}
+
+
 function mapGetById(mapId, cb) {
     Map.findOne({
         id: mapId
@@ -397,9 +410,10 @@ module.exports = {
         userNameDelete:    ttableUserNameDelete
     },
     map: {
-        add:     mapAdd,
-        getById: mapGetById,
-        update:  mapUpdate
+        add:          mapAdd,
+        placeRemove:  mapPlaceRemove,
+        getById:      mapGetById,
+        update:       mapUpdate
     },
     task: {
         add:            taskAdd,
