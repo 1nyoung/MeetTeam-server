@@ -49,6 +49,44 @@ function taskAdd (req, res){
 }
 
 
+// POST /task/remove
+function taskRemove (req, res){
+    logger.debug("taskRemove 호출")
+
+    var body = req.body
+    var md5sum = crypto.createHash('md5');
+    var id
+
+    md5sum.update(body.roomTitle + body.taskName);
+    id = md5sum.digest('hex');
+
+    db.user.getBySess(body.sess, function (err, user) {
+        if (err) {
+            logger.error("userGetBySess DB error : " + err)
+            res.send(err)
+            return
+        }
+
+        if (!user) {
+            logger.error("not found USER ")
+            res.status(400).send("not found USER ")
+            return
+        }
+
+
+        db.task.remove(id, function (err, result) {
+            if(err) {
+                logger.error("taskAdd DB error : " + err)
+                res.send(err)
+                return
+            }
+
+            res.send(result)
+        })
+    })
+}
+
+
 // POST /task/clistAdd
 function taskClistAdd (req, res){
     logger.debug("taskClistAdd 호출")
@@ -148,6 +186,7 @@ function taskShow (req, res){
 
 module.exports = {
     add:      taskAdd,
+    remove:   taskRemove,
     clistAdd: taskClistAdd,
     show:     taskShow
 }

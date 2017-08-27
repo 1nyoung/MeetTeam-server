@@ -298,6 +298,13 @@ function taskAdd(task, cb) {
 }
 
 
+function taskRemove(id, cb) {
+    Task.remove({
+        id: id
+    }, cb)
+}
+
+
 function taskGetById(roomTitle, cb) {
     Task.find({
         roomTitle: roomTitle
@@ -375,6 +382,7 @@ module.exports = {
     },
     task: {
         add:         taskAdd,
+        remove:      taskRemove,
         getById:     taskGetById,
         update:      taskUpdate,
         checkUpdate: taskCheckUpdate
