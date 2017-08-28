@@ -43,7 +43,6 @@ function mapAdd (req, res){
         }
 
         db.map.getById(id, function (err, map) {
-            console.log(user)
             if(err) {
                 logger.error("mapGetById DB error : " + err)
                 res.send(err)
@@ -68,14 +67,22 @@ function mapAdd (req, res){
                 return
             }
 
-            db.map.update(id, place, function (err, result) {
-                if(err) {
-                    logger.error("mapUpdate DB error : " + err)
+            db.map.placeRemove(id, user.name, function (err) {
+                if (err) {
+                    logger.error("mapPlaceRemove DB error : " + err)
                     res.send(err)
                     return
                 }
 
-                res.send(result)
+                db.map.update(id, place, function (err, result) {
+                    if(err) {
+                        logger.error("mapUpdate DB error : " + err)
+                        res.send(err)
+                        return
+                    }
+
+                    res.send(result)
+                })
             })
         })
     })
