@@ -73,15 +73,28 @@ function taskRemove (req, res){
             return
         }
 
-
-        db.task.remove(id, function (err, result) {
+        db.task.getById(id, function (err, task) {
             if(err) {
-                logger.error("taskAdd DB error : " + err)
+                logger.error("ttableGetById DB error : " + err)
                 res.send(err)
                 return
             }
 
-            res.send(result)
+            if(task.length === 0){
+                logger.error("not found TASK")
+                res.status(400).send("not found TASK")
+                return
+            }
+
+            db.task.remove(id, function (err, result) {
+                if(err) {
+                    logger.error("taskAdd DB error : " + err)
+                    res.send(err)
+                    return
+                }
+
+                res.send(result)
+            })
         })
     })
 }

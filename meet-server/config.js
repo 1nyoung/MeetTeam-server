@@ -5,6 +5,8 @@ module.exports = {
 	route_info: [
 	    //===== User =====//
 	    {file:'./user', path:'/user/add', method:'add', type:'post'},
+        {file:'./user', path:'/user/update', method:'update', type:'post'},
+        {file:'./user', path:'/user/show', method:'show', type:'post'},
         {file:'./user', path:'/user/login', method:'login', type:'post'},
         {file:'./user', path:'/user/list', method:'list', type:'post'},
 

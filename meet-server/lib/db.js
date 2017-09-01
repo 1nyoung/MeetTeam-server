@@ -129,7 +129,10 @@ function userUpdate(id, sess, cb) {
     User.update({
         id: id
     },{
-        $set: { sess: sess}
+        $set:
+            {
+                sess: sess
+            }
     }, cb)
 }
 
