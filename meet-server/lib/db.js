@@ -9,7 +9,7 @@ var UserSchema = new Schema({
     id: String,
     password: String,
     name: String,
-    idNum: Number,
+    idNum: String,
     phoneNum: String,
     addr: String,
     email: String,
@@ -126,6 +126,20 @@ function userGetById(id, select, cb) {
 
 
 function userUpdate(id, sess, cb) {
+    User.update({
+        id: id
+    },{
+        $set:
+            {
+                PhoneNum: sess,
+                addr: addr,
+                email: email
+            }
+    }, cb)
+}
+
+
+function userUpdateSess(id, sess, cb) {
     User.update({
         id: id
     },{
@@ -392,10 +406,11 @@ function appGetById(appId, cb) {
 module.exports = {
     init: init,
     user: {
-        add:       userAdd,
-        getById:   userGetById,
-        getBySess: userGetBySess,
-        update:    userUpdate
+        add:        userAdd,
+        getById:    userGetById,
+        getBySess:  userGetBySess,
+        update:     userUpdate,
+        updateSess: userUpdateSess
     },
     room: {
         add:        roomAdd,

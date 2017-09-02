@@ -39,35 +39,44 @@ function userUpdate(req, res) {
     logger.debug('userUpdate 호출')
 
     var body = req.body
-    var sess
-    // body.name
-    // body.phoneNum
-    // 이메일
-    // 주소
-    // 비밀번호
+    var newUser
 
-    // db.user.update(body.id, body.name, function (err) {
-    //     if(err){
-    //         logger.error("userUpdate DB error : " + err)
-    //         res.send(err)
-    //         return
-    //     }
-    //
-    //     db.user.getById(body.id, function (err, user) {
-    //         if(err){
-    //             logger.error(err)
-    //             res.send(err)
-    //             return
-    //         }
-    //
-    //         if (!user) {
-    //             res.status(400).send('Sorry cant find that!')
-    //             return
-    //         }
-    //
-    //         res.send({})
-    //     })
-    // })
+    db.user.getBySess(body.sess, function (err, user) {
+        if (err) {
+            logger.error("userGetBySess DB error : " + err)
+            res.send(err)
+            return
+        }
+
+        if (!user) {
+            logger.error("not found USER ")
+            res.status(400).send("not found USER ")
+            return
+        }
+
+        newUser = {
+            id:          user.id,
+            password:    body.password || user.password,
+            name:        user.name,
+            idNum:       user.idNum,
+            phoneNum:    body.phoneNum || user.phoneNum,
+            addr:        body.addr || user.addr,
+            email:       body.email || user.email,
+            isProfessor: user.isProfessor,
+            sess:        user.sess
+        }
+
+        console.log(newUser)
+        db.user.add(newUser, function (err, result) {
+            if(err){
+                logger.error("userAdd DB error : " + err)
+                res.send(err)
+                return
+            }
+
+            res.send(result)
+        })
+    })
 }
 
 
@@ -103,7 +112,7 @@ function userLogin(req, res) {
     var sess
 
     sess = crypto.randomBytes(10).toString('hex')
-    db.user.update(body.id, sess, function (err) {
+    db.user.updateSess(body.id, sess, function (err) {
         if(err){
             logger.error("userUpdate DB error : " + err)
             res.send(err)
