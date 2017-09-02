@@ -109,7 +109,7 @@ function userAdd(user, cb) {
 function userGetBySess(sess, cb) {
     User.findOne({
         sess: sess
-    }, cb)
+    }).select(SELECT.USER).exec(cb)
 }
 
 
