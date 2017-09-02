@@ -14,7 +14,8 @@ var UserSchema = new Schema({
     addr: String,
     email: String,
     isProfessor: Boolean,
-    sess: String
+    sess: String,
+    photo: String
 }), User = mongoose.model('User', UserSchema)
 
 var RoomSchema = new Schema({
@@ -75,7 +76,7 @@ var AppSchema = new Schema({
 
 
 var SELECT = {
-    USER: '_id id name email addr phoneNum idNum isProfessor sess'
+    USER: '_id id name email addr phoneNum idNum isProfessor sess photo'
 }
 
 

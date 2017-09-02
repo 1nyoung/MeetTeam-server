@@ -1,7 +1,22 @@
 var crypto = require('crypto')
+var multer = require('multer')
+
 var async = require('async')
+
 var db = require('../lib/db')
 var logger = require('../lib/logger')
+
+
+var storage	=	multer.diskStorage({
+    destination: function (req, file, callback) {
+        callback(null, './uploads');
+    },
+    filename: function (req, file, callback) {
+        callback(null, file.fieldname + '-' + Date.now());
+    }
+});
+
+var upload = multer({ storage : storage}).single('userPhoto');
 
 
 // POST /user/add
@@ -41,40 +56,47 @@ function userUpdate(req, res) {
     var body = req.body
     var newUser
 
-    db.user.getBySess(body.sess, function (err, user) {
-        if (err) {
+    upload(req, res, function (err) {
+        if(err) {
             logger.error("userGetBySess DB error : " + err)
             res.send(err)
             return
         }
 
-        if (!user) {
-            logger.error("not found USER ")
-            res.status(400).send("not found USER ")
-            return
-        }
-
-        newUser = {
-            id:          user.id,
-            password:    body.password || user.password,
-            name:        user.name,
-            idNum:       user.idNum,
-            phoneNum:    body.phoneNum || user.phoneNum,
-            addr:        body.addr || user.addr,
-            email:       body.email || user.email,
-            isProfessor: user.isProfessor,
-            sess:        user.sess
-        }
-
-        console.log(newUser)
-        db.user.add(newUser, function (err, result) {
-            if(err){
-                logger.error("userAdd DB error : " + err)
+        db.user.getBySess(body.sess, function (err, user) {
+            if (err) {
+                logger.error("userGetBySess DB error : " + err)
                 res.send(err)
                 return
             }
 
-            res.send(result)
+            if (!user) {
+                logger.error("not found USER ")
+                res.status(400).send("not found USER ")
+                return
+            }
+
+            newUser = {
+                id:          user.id,
+                password:    body.password || user.password,
+                name:        user.name,
+                idNum:       user.idNum,
+                phoneNum:    body.phoneNum || user.phoneNum,
+                addr:        body.addr || user.addr,
+                email:       body.email || user.email,
+                isProfessor: user.isProfessor,
+                sess:        user.sess
+            }
+
+            db.user.add(newUser, function (err, result) {
+                if(err){
+                    logger.error("userAdd DB error : " + err)
+                    res.send(err)
+                    return
+                }
+
+                res.send(result)
+            })
         })
     })
 }
