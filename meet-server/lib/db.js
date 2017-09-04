@@ -360,7 +360,7 @@ function taskGetById(id, cb) {
 function taskGetByRoomTitle(roomTitle, cb) {
     Task.find({
         roomTitle: roomTitle
-    },cb)
+    }).sort({"_id": 1}).exec(cb)
 }
 
 
