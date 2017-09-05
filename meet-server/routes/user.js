@@ -35,6 +35,7 @@ function userAdd(req, res) {
         addr: body.addr,
         email: body.email,
         isProfessor: body.isProfessor,
+        photo: "https://cdn2.iconfinder.com/data/icons/circle-icons-1/64/profle-128.png"
     }
 
     db.user.add(user, function (err, result) {
@@ -87,7 +88,8 @@ function userUpdate(req, res) {
             addr:        body.addr || user.addr,
             email:       body.email || user.email,
             isProfessor: user.isProfessor,
-            sess:        user.sess
+            sess:        user.sess,
+            photo:       user.photo
         }
 
         db.user.add(newUser, function (err, result) {
