@@ -36,6 +36,50 @@ function roomAdd (req, res){
 }
 
 
+// POST /room/addChat
+function roomAddChat (req, res){
+    logger.debug("roomAddChat 호출")
+    var body = req.body
+
+    db.user.getBySess(req.body.sess, function (err, user) {
+        if (err) {
+            logger.error("userGetBySess DB error : " + err)
+            res.send(err)
+            return
+        }
+
+        if (!user) {
+            logger.error("not found USER")
+            res.status(400).send("not found USER")
+            return
+        }
+
+        db.room.getByTitle(body.title, function (err, room) {
+            if(err){
+                logger.error("roomGetByTitle DB error : " + err)
+                res.send(err)
+                return
+            }
+
+            if(room.length === 0) {
+                logger.error("not found ROOM")
+                res.status(400).send("not found ROOM")
+                return
+            }
+
+            db.room.update(room.title, body.chat, function (err, result) {
+                if(err){
+                    logger.error("roomUpdate DB error : " + err)
+                    res.send(err)
+                }
+
+                res.send(result)
+            })
+        })
+    })
+}
+
+
 // POST /room/addUser
 function roomAddUser (req, res){
     logger.debug("roomAddUser 호출")
@@ -121,5 +165,6 @@ function roomList (req, res){
 module.exports = {
     add: roomAdd,
     addUser: roomAddUser,
+    addChat: roomAddChat,
     list: roomList
 }

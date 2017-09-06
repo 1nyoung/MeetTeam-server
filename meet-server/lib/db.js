@@ -22,7 +22,13 @@ var RoomSchema = new Schema({
     title: String,
     chiefName: String,
     subject: String,
-    belongIds: [String]
+    belongIds: [String],
+    chat: [
+        // {
+        //     userName: String,
+        //     message: String
+        // }
+    ]
 }), Room = mongoose.model('Room', RoomSchema)
 
 var TtableSchema = new Schema({
@@ -176,6 +182,17 @@ function roomGetByTitle(title, cb) {
 
 
 function roomUpdate(title, belongIds, cb) {
+    Room.update({
+        title: title
+    }, {
+        $set: {
+            belongIds: belongIds
+        }
+    },cb)
+}
+
+
+function roomUpdateChat(title, userName, belongIds, cb) {
     Room.update({
         title: title
     }, {
