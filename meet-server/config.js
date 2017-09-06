@@ -14,7 +14,8 @@ module.exports = {
         {file:'./room', path:'/room/add', method:'add', type:'post'},
         {file:'./room', path:'/room/addUser', method:'addUser', type:'post'},
         {file:'./room', path:'/room/addChat', method:'addChat', type:'post'},
-        {file:'./room', path:'/room/list/', method:'list', type:'post'},
+        {file:'./room', path:'/room/list', method:'list', type:'post'},
+        {file:'./room', path:'/room/show', method:'show', type:'post'},
         // {file:'./room', path:'/room/delete', method:'', type:'post'},
         // {file:'./room', path:'/room/search', method:'', type:'post'},
         //

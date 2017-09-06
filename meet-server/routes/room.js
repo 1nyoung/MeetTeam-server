@@ -168,9 +168,26 @@ function roomList (req, res){
 }
 
 
+// POST /room/show
+function roomShow(req, res) {
+    logger.debug('roomShow 호출')
+    var body = req.body
+
+    db.room.getByTitle(body.title, function (err, room) {
+        if(err){
+            logger.error("roomGetByTitle DB error : " + err)
+            res.send(err)
+        }
+
+        res.send(room)
+    })
+}
+
+
 module.exports = {
     add: roomAdd,
     addUser: roomAddUser,
     addChat: roomAddChat,
-    list: roomList
+    list: roomList,
+    show: roomShow
 }
