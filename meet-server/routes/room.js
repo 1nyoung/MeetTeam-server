@@ -40,6 +40,7 @@ function roomAdd (req, res){
 function roomAddChat (req, res){
     logger.debug("roomAddChat 호출")
     var body = req.body
+    var chatting
 
     db.user.getBySess(req.body.sess, function (err, user) {
         if (err) {
@@ -67,9 +68,14 @@ function roomAddChat (req, res){
                 return
             }
 
-            db.room.update(room.title, body.chat, function (err, result) {
+            chatting ={
+                userName: user.name,
+                message: body.message
+            }
+
+            db.room.updateChat(room.title, chatting, function (err, result) {
                 if(err){
-                    logger.error("roomUpdate DB error : " + err)
+                    logger.error("roomUpdateChat DB error : " + err)
                     res.send(err)
                 }
 

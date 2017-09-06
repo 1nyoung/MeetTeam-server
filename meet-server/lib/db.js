@@ -192,12 +192,12 @@ function roomUpdate(title, belongIds, cb) {
 }
 
 
-function roomUpdateChat(title, userName, belongIds, cb) {
+function roomUpdateChat(title, chatting, cb) {
     Room.update({
         title: title
     }, {
-        $set: {
-            belongIds: belongIds
+        $push: {
+            chat: chatting
         }
     },cb)
 }
@@ -434,7 +434,8 @@ module.exports = {
         add:        roomAdd,
         list:       roomList,
         getByTitle: roomGetByTitle,
-        update:     roomUpdate
+        update:     roomUpdate,
+        updateChat: roomUpdateChat
     },
     ttable: {
         add:               ttableAdd,
