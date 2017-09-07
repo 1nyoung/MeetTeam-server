@@ -9,19 +9,26 @@ var UserSchema = new Schema({
     id: String,
     password: String,
     name: String,
-    idNum: Number,
+    idNum: String,
     phoneNum: String,
     addr: String,
     email: String,
     isProfessor: Boolean,
-    sess: String
+    sess: String,
+    photo: String
 }), User = mongoose.model('User', UserSchema)
 
 var RoomSchema = new Schema({
     title: String,
     chiefName: String,
     subject: String,
-    belongIds: [String]
+    belongIds: [String],
+    chat: [
+        // {
+        //     userName: String,
+        //     message: String
+        // }
+    ]
 }), Room = mongoose.model('Room', RoomSchema)
 
 var TtableSchema = new Schema({
@@ -31,8 +38,8 @@ var TtableSchema = new Schema({
     date: String,
     tables: [
         // {
-        //     userName: String,
-        //     times: [Number]
+        //     idx: String,
+        //     userNames: [String]
         // }
     ]
 }), Ttable = mongoose.model('Ttable', TtableSchema)
@@ -75,7 +82,7 @@ var AppSchema = new Schema({
 
 
 var SELECT = {
-    USER: '_id id name email addr phoneNum idNum isProfessor sess'
+    USER: '_id id name email addr phoneNum idNum isProfessor sess photo'
 }
 
 
@@ -109,7 +116,7 @@ function userAdd(user, cb) {
 function userGetBySess(sess, cb) {
     User.findOne({
         sess: sess
-    }, cb)
+    }).select(SELECT.USER).exec(cb)
 }
 
 
@@ -129,7 +136,24 @@ function userUpdate(id, sess, cb) {
     User.update({
         id: id
     },{
-        $set: { sess: sess}
+        $set:
+            {
+                PhoneNum: sess,
+                addr: addr,
+                email: email
+            }
+    }, cb)
+}
+
+
+function userUpdateSess(id, sess, cb) {
+    User.update({
+        id: id
+    },{
+        $set:
+            {
+                sess: sess
+            }
     }, cb)
 }
 
@@ -168,6 +192,17 @@ function roomUpdate(title, belongIds, cb) {
 }
 
 
+function roomUpdateChat(title, chatting, cb) {
+    Room.update({
+        title: title
+    }, {
+        $push: {
+            chat: chatting
+        }
+    },cb)
+}
+
+
 function ttableAdd(ttable, cb) {
     Ttable.update({
         id: ttable.id
@@ -200,10 +235,29 @@ function ttableGetById(ttableId, cb) {
 //     }, cb)
 // }
 
-function ttableGetByName(id, userName, cb) {
+function ttableGetByTime(id, time, cb) {
     Ttable.findOne({
         id: id,
-        "tables.userName": userName
+        "tables.time": time
+    }, cb)
+}
+
+
+function ttableGetByUserName(id, time, userName, cb) {
+    Ttable.findOne({
+        $and:[
+            {
+                id: id,
+            },
+            {
+                tables:{
+                    $elemMatch:{
+                        time: time,
+                        userNames: userName
+                    }
+                }
+            }
+        ]
     }, cb)
 }
 
@@ -218,13 +272,26 @@ function ttableUpdate(id, table, cb) {
     }, cb)
 }
 
-function ttableTimesUpdate(id, userName, times, cb) {
+
+function ttableUserNamesUpdate(id, time, userName, cb) {
     Ttable.update({
         id: id,
-        "tables.userName": userName
+        "tables.time": time
     },{
-        $set:{
-            "tables.$.times": times
+        $push:{
+            "tables.$.userNames": userName
+        }
+    }, cb)
+}
+
+
+function ttableUserNameDelete(id, time, userName, cb) {
+    Ttable.update({
+        id: id,
+        "tables.time": time
+    },{
+        $pull:{
+            "tables.$.userNames": userName
         }
     }, cb)
 }
@@ -235,6 +302,19 @@ function mapAdd(map, cb) {
         id: map.id
     }, map, {
         upsert: true
+    }, cb)
+}
+
+
+function mapPlaceRemove(id, userName, cb) {
+    Map.update({
+        id: id,
+    },{
+        $pull: {
+            "places": {
+                userName: userName
+            }
+        }
     }, cb)
 }
 
@@ -266,10 +346,38 @@ function taskAdd(task, cb) {
 }
 
 
-function taskGetById(roomTitle, cb) {
+function taskRemove(id, cb) {
+    Task.remove({
+        id: id
+    }, cb)
+}
+
+
+function taskClistRemove(id, list, name, cb) {
+    Task.update({
+        id: id,
+    },{
+        $pull: {
+            "clist": {
+                list: list,
+                name: name
+            }
+        }
+    }, cb)
+}
+
+
+function taskGetById(id, cb) {
+    Task.find({
+        id: id
+    },cb)
+}
+
+
+function taskGetByRoomTitle(roomTitle, cb) {
     Task.find({
         roomTitle: roomTitle
-    },cb)
+    }).sort({"_id": 1}).exec(cb)
 }
 
 
@@ -316,34 +424,42 @@ function appGetById(appId, cb) {
 module.exports = {
     init: init,
     user: {
-        add:       userAdd,
-        getById:   userGetById,
-        getBySess: userGetBySess,
-        update:    userUpdate
+        add:        userAdd,
+        getById:    userGetById,
+        getBySess:  userGetBySess,
+        update:     userUpdate,
+        updateSess: userUpdateSess
     },
     room: {
         add:        roomAdd,
         list:       roomList,
         getByTitle: roomGetByTitle,
-        update:     roomUpdate
+        update:     roomUpdate,
+        updateChat: roomUpdateChat
     },
     ttable: {
-        add:         ttableAdd,
-        getById:     ttableGetById,
-        getByName:   ttableGetByName,
-        update:      ttableUpdate,
-        timesUpdate: ttableTimesUpdate
+        add:               ttableAdd,
+        getById:           ttableGetById,
+        getByTime:         ttableGetByTime,
+        getByUserName:     ttableGetByUserName,
+        update:            ttableUpdate,
+        userNamesUpdate:   ttableUserNamesUpdate,
+        userNameDelete:    ttableUserNameDelete
     },
     map: {
-        add:     mapAdd,
-        getById: mapGetById,
-        update:  mapUpdate
+        add:          mapAdd,
+        placeRemove:  mapPlaceRemove,
+        getById:      mapGetById,
+        update:       mapUpdate
     },
     task: {
-        add:         taskAdd,
-        getById:     taskGetById,
-        update:      taskUpdate,
-        checkUpdate: taskCheckUpdate
+        add:            taskAdd,
+        remove:         taskRemove,
+        clistRemove:    taskClistRemove,
+        getById:        taskGetById,
+        getByRoomTitle: taskGetByRoomTitle,
+        update:         taskUpdate,
+        checkUpdate:    taskCheckUpdate
     },
     app: {
         add: appAdd,
