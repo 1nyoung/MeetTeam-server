@@ -13,7 +13,6 @@ var UserSchema = new Schema({
     phoneNum: String,
     addr: String,
     email: String,
-    isProfessor: Boolean,
     sess: String,
     photo: String
 }), User = mongoose.model('User', UserSchema)

@@ -34,7 +34,6 @@ function userAdd(req, res) {
         phoneNum: body.phoneNum,
         addr: body.addr,
         email: body.email,
-        isProfessor: body.isProfessor,
         photo: "https://cdn2.iconfinder.com/data/icons/circle-icons-1/64/profle-128.png"
     }
 
@@ -87,7 +86,6 @@ function userUpdate(req, res) {
             phoneNum:    body.phoneNum || user.phoneNum,
             addr:        body.addr || user.addr,
             email:       body.email || user.email,
-            isProfessor: user.isProfessor,
             sess:        user.sess,
             photo:       user.photo
         }
