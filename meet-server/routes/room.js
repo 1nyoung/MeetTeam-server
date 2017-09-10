@@ -111,7 +111,7 @@ function roomAddUser (req, res){
                 return
             }
 
-            if(room.length === 0) {
+            if(!room) {
                 logger.error("not found ROOM")
                 res.status(400).send("not found ROOM")
                 return

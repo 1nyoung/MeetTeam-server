@@ -32,8 +32,8 @@ function appAdd (req, res){
             id: id,
             roomTitle: body.roomTitle,
             date: body.date,
-            decTime: body.decTime,
-            decPlace: body.decPlace
+            decTime: body.decTime || "미정",
+            decPlace: body.decPlace || "미정"
         }
 
         db.app.add(app, function (err, result) {
